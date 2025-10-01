@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f; // Speed of the player
+    public float walkSpeed = 3f; 
+    public float runSpeed = 6f;  
 
     private Rigidbody2D rb;
-    private float moveInput; // single float for left/right
+    private float moveInput;
+    private float currentSpeed;
 
     void Start()
     {
@@ -14,13 +16,21 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // Get horizontal input only (A/D or Left/Right arrows)
         moveInput = Input.GetAxisRaw("Horizontal");
+
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        {
+            currentSpeed = runSpeed;
+        }
+        else
+        {
+            currentSpeed = walkSpeed;
+        }
     }
 
     void FixedUpdate()
     {
-        // Move player only along X axis
-        rb.MovePosition(rb.position + new Vector2(moveInput, 0f) * moveSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + new Vector2(moveInput, 0f) * currentSpeed * Time.fixedDeltaTime);
     }
 }
+
