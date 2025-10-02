@@ -7,6 +7,7 @@ public class PlayerInteractor : MonoBehaviour
     public GameObject ePrompt;
 
     private Interactable currentTarget;
+    private Interactable lastTarget;
 
     void Update()
     {
@@ -14,7 +15,13 @@ public class PlayerInteractor : MonoBehaviour
 
         if (currentTarget != null)
         {
-            ePrompt.SetActive(true);
+            if (lastTarget != currentTarget)
+            {
+                if (lastTarget != null) lastTarget.HidePrompt();
+                currentTarget.ShowPrompt();
+                lastTarget = currentTarget;
+            }
+
             if (Input.GetKeyDown(KeyCode.E))
             {
                 currentTarget.Interact();
@@ -22,7 +29,11 @@ public class PlayerInteractor : MonoBehaviour
         }
         else
         {
-            ePrompt.SetActive(false);
+            if (lastTarget != null)
+            {
+                lastTarget.HidePrompt();
+                lastTarget = null;
+            }
         }
 
         void CheckForInteractable()
