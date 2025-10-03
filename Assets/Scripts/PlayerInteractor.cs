@@ -4,7 +4,6 @@ public class PlayerInteractor : MonoBehaviour
 {
     public float interactRange = 2f;
     public LayerMask interactableMask;
-    public GameObject ePrompt;
 
     private Interactable currentTarget;
     private Interactable lastTarget;
