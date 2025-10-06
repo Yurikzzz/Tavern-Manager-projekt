@@ -37,16 +37,25 @@ public class PlayerInteractor : MonoBehaviour
 
         void CheckForInteractable()
         {
-            Collider2D hit = Physics2D.OverlapCircle(transform.position, interactRange, interactableMask);
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange, interactableMask);
 
-            if (hit != null)
+            Interactable closest = null;
+            float closestDist = float.MaxValue;
+
+            foreach (var hit in hits)
             {
-                currentTarget = hit.GetComponent<Interactable>();
+                Interactable interactable = hit.GetComponent<Interactable>();
+                if (interactable != null)
+                {
+                    float dist = Vector2.Distance(transform.position, hit.transform.position);
+                    if (dist < closestDist)
+                    {
+                        closestDist = dist;
+                        closest = interactable;
+                    }
+                }
             }
-            else
-            {
-                currentTarget = null;
-            }
+            currentTarget = closest;
         }
     }
 }
