@@ -36,7 +36,6 @@ public class Door : Interactable
         isOpen = true;
         blockingCollider.enabled = false;
         spriteRenderer.sprite = openSprite;
-        Debug.Log("Door opened");
 
         if (autoCloseRoutine != null)
         {
@@ -50,7 +49,6 @@ public class Door : Interactable
         isOpen = false;
         blockingCollider.enabled = true;
         spriteRenderer.sprite = closedSprite;
-        Debug.Log("Door closed");
 
         if (autoCloseRoutine != null)
         {
