@@ -73,7 +73,11 @@ public class NPCController : MonoBehaviour
             transform.position.z
         );
 
-        // Later: play sitting animation, change sprite, etc.
+        NPCOrder npcOrder = GetComponent<NPCOrder>();
+        if (npcOrder != null)
+        {
+            npcOrder.StartOrder();
+        }
     }
 
     void OnDestroy()

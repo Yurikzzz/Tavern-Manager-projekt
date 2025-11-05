@@ -202,6 +202,7 @@ GameObject:
   - component: {fileID: 5588014481923074214}
   - component: {fileID: -728801853476120421}
   - component: {fileID: 7749200012297991967}
+  - component: {fileID: 5206294185032557453}
   m_Layer: 6
   m_Name: NPC
   m_TagString: Untagged
@@ -352,3 +353,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &5206294185032557453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7558932106577968589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827105ed6e2eded4aa88f517031f48b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleDishes:
+  - {fileID: 11400000, guid: 5c1424fd8b9222f47bf5bac0cf909a31, type: 2}
+  - {fileID: 11400000, guid: 43d6aee4a832ea947a7913593fd5ae96, type: 2}
