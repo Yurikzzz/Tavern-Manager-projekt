@@ -61,6 +61,8 @@ public class NPCSpawner : MonoBehaviour
     {
         while (true)
         {
+            spawnedNpcs.RemoveAll(npc => npc == null);
+
             if (spawnedNpcs.Count < maxNpcs)
             {
                 SpawnOneNpc();
@@ -80,6 +82,12 @@ public class NPCSpawner : MonoBehaviour
 
         GameObject npc = Instantiate(npcPrefab, spawnPoint.position, Quaternion.identity);
         spawnedNpcs.Add(npc);
+
+        NPCController controller = npc.GetComponent<NPCController>();
+        if (controller != null)
+        {
+            controller.exitPoint = spawnPoint;
+        }
     }
 
     void ClearAllNpcs()

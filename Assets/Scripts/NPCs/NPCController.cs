@@ -4,9 +4,13 @@ public class NPCController : MonoBehaviour
 {
     public float moveSpeed = 2f;
 
+    public Transform exitPoint;
+
     private Transform targetSeat;
     private Table targetTable;
     private bool isSitting = false;
+    private bool isLeaving = false;
+
 
     private float groundY;
 
@@ -19,6 +23,13 @@ public class NPCController : MonoBehaviour
 
     void Update()
     {
+        if (isLeaving)
+        {
+            HandleLeaving();
+            return;
+        }
+
+
         if (targetSeat == null || isSitting)
             return;
 
@@ -77,6 +88,49 @@ public class NPCController : MonoBehaviour
         if (npcOrder != null)
         {
             npcOrder.StartOrder();
+        }
+    }
+    public void StartLeaving()
+    {
+        if (isLeaving)
+            return;
+
+        isLeaving = true;
+
+        if (targetTable != null && targetSeat != null)
+        {
+            targetTable.FreeSeat(targetSeat);
+            targetTable = null;
+            targetSeat = null;
+        }
+
+        Debug.Log(name + " is leaving the tavern.");
+    }
+
+    private void HandleLeaving()
+    {
+        if (exitPoint == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Vector3 targetPos = new Vector3(
+            exitPoint.position.x,
+            groundY,
+            transform.position.z
+        );
+
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            targetPos,
+            moveSpeed * Time.deltaTime
+        );
+
+        float distance = Vector2.Distance(transform.position, targetPos);
+        if (distance < 0.05f)
+        {
+            Destroy(gameObject); 
         }
     }
 
