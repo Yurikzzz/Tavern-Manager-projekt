@@ -57,7 +57,7 @@ public class NPCSpawner : MonoBehaviour
         }
     }
 
-    IEnumerator SpawnLoop()
+    IEnumerator SpawnLoop() 
     {
         while (true)
         {
