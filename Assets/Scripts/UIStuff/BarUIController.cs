@@ -13,7 +13,7 @@ public class BarUIController : MonoBehaviour
     [Header("Dishes UI")]
     public Transform dishesGridParent;
     public GameObject dishButtonPrefab;
-    public Dish[] allDishes;   // assign all available dishes here in Inspector
+    public Dish[] allDishes;
 
     [Header("References")]
     public PlayerCarry playerCarry;
@@ -67,7 +67,6 @@ public class BarUIController : MonoBehaviour
         else Open();
     }
 
-    // ---------- ORDERS LIST ----------
 
     public void RefreshOrdersList()
     {
@@ -105,7 +104,6 @@ public class BarUIController : MonoBehaviour
             }
         }
 
-        // After recreating order list, also clear requested highlights
         UpdateRequestedDishHighlight();
     }
 
@@ -117,11 +115,9 @@ public class BarUIController : MonoBehaviour
         UpdateRequestedDishHighlight();
     }
 
-    // ---------- DISH GRID ----------
 
     public void RefreshDishGrid()
     {
-        // Clear old dish buttons
         foreach (Transform child in dishesGridParent)
         {
             Destroy(child.gameObject);
@@ -155,13 +151,11 @@ public class BarUIController : MonoBehaviour
             }
         }
 
-        // If an order is already selected when refreshing, highlight its requested dish
         UpdateRequestedDishHighlight();
     }
 
     public void SelectDish(DishButtonUI button)
     {
-        // Deselect previous
         if (selectedDishButton != null)
         {
             selectedDishButton.SetSelected(false);
@@ -187,9 +181,7 @@ public class BarUIController : MonoBehaviour
         }
     }
 
-    // ---------- CONFIRM ----------
 
-    // Hook this to Confirm button
     public void ConfirmSelectedDish()
     {
         if (playerCarry == null)
@@ -212,15 +204,18 @@ public class BarUIController : MonoBehaviour
 
         if (selectedOrder == null)
         {
-            Debug.Log("Bar: No order selected. You can still carry the dish, but it won't match anyone.");
-            // You *could* require an order; for now we just warn.
+            Debug.Log("Bar: No order selected. You can still carry the dish, but it won't be marked for anyone.");
         }
 
         Dish chosenDish = selectedDishButton.Dish;
-
         playerCarry.TakeDish(chosenDish);
 
         Debug.Log($"Bar: Prepared {chosenDish.displayName}.");
+
+        if (selectedOrder != null && selectedOrder.customer != null)
+        {
+            selectedOrder.customer.ShowDeliveryMarker();
+        }
 
         Close();
     }

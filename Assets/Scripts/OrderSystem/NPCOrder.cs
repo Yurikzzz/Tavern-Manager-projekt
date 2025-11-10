@@ -3,8 +3,14 @@ using UnityEngine;
 
 public class NPCOrder : MonoBehaviour
 {
+    [Header("What this NPC can order")]
     public Dish[] possibleDishes;
+
+    [Header("Behaviour")]
     public float eatingDuration = 10f;
+
+    [Header("UI / Markers")]
+    public GameObject deliveryMarker;
 
     public Order CurrentOrder { get; private set; }
     public bool HasOrder => CurrentOrder != null && !CurrentOrder.isServed;
@@ -15,6 +21,12 @@ public class NPCOrder : MonoBehaviour
     void Awake()
     {
         npcController = GetComponent<NPCController>();
+    }
+
+    void Start()
+    {
+        if (deliveryMarker != null)
+            deliveryMarker.SetActive(false);
     }
 
     public void StartOrder()
@@ -40,6 +52,18 @@ public class NPCOrder : MonoBehaviour
         Debug.Log($"{name} started an order for {chosen.displayName}");
     }
 
+    public void ShowDeliveryMarker()
+    {
+        if (deliveryMarker != null)
+            deliveryMarker.SetActive(true);
+    }
+
+    public void HideDeliveryMarker()
+    {
+        if (deliveryMarker != null)
+            deliveryMarker.SetActive(false);
+    }
+
     public bool TryServe(Dish dishFromPlayer)
     {
         if (dishFromPlayer == null)
@@ -55,25 +79,22 @@ public class NPCOrder : MonoBehaviour
 
         if (correct)
         {
-            OrderManager.Instance.MarkOrderServed(CurrentOrder);
             Debug.Log($"{name}: Mmm, that's exactly my {dishFromPlayer.displayName}!");
-
-            if (eatingRoutine == null)
-                eatingRoutine = StartCoroutine(EatAndLeave());
         }
         else
         {
             Debug.Log($"{name}: Wrong dish, but thanks...");
-
-            OrderManager.Instance.MarkOrderServed(CurrentOrder);
-
-            if (eatingRoutine == null)
-                eatingRoutine = StartCoroutine(EatAndLeave());
         }
 
-        return true; 
-    }
+        OrderManager.Instance.MarkOrderServed(CurrentOrder);
 
+        HideDeliveryMarker();
+
+        if (eatingRoutine == null)
+            eatingRoutine = StartCoroutine(EatAndLeave());
+
+        return true;
+    }
 
     private IEnumerator EatAndLeave()
     {
@@ -90,6 +111,14 @@ public class NPCOrder : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (CurrentOrder != null && OrderManager.Instance != null)
+        {
+            OrderManager.Instance.ActiveOrders.Remove(CurrentOrder);
         }
     }
 }

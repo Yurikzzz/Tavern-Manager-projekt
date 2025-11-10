@@ -30,6 +30,28 @@ public class OrderManager : MonoBehaviour
             Destroy(gameObject);
     }
 
+    void Start()
+    {
+        if (GameTimeManager.Instance != null)
+        {
+            GameTimeManager.Instance.OnDayChanged += HandleDayChanged;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (GameTimeManager.Instance != null)
+        {
+            GameTimeManager.Instance.OnDayChanged -= HandleDayChanged;
+        }
+    }
+
+    private void HandleDayChanged(int newDay)
+    {
+        Debug.Log($"OrderManager: New day {newDay}, clearing all orders.");
+        ClearAllOrders();
+    }
+
     public Order CreateOrder(NPCOrder customer, Dish dish)
     {
         Order order = new Order(customer, dish);
@@ -42,5 +64,12 @@ public class OrderManager : MonoBehaviour
     public void MarkOrderServed(Order order)
     {
         order.isServed = true;
+
+        ActiveOrders.Remove(order);
+    }
+
+    public void ClearAllOrders()
+    {
+        ActiveOrders.Clear();
     }
 }
