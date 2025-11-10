@@ -42,24 +42,38 @@ public class NPCOrder : MonoBehaviour
 
     public bool TryServe(Dish dishFromPlayer)
     {
-        if (!HasOrder)
+        if (dishFromPlayer == null)
             return false;
 
-        if (dishFromPlayer == CurrentOrder.dish)
+        if (CurrentOrder == null)
         {
-            OrderManager.Instance.MarkOrderServed(CurrentOrder);
-            Debug.Log($"{name} was served {dishFromPlayer.displayName}");
-
-            if (eatingRoutine == null)
-            {
-                eatingRoutine = StartCoroutine(EatAndLeave());
-            }
-
+            Debug.Log($"{name}: I didn't order anything, but thanks...");
             return true;
         }
 
-        return false;
+        bool correct = (dishFromPlayer == CurrentOrder.dish);
+
+        if (correct)
+        {
+            OrderManager.Instance.MarkOrderServed(CurrentOrder);
+            Debug.Log($"{name}: Mmm, that's exactly my {dishFromPlayer.displayName}!");
+
+            if (eatingRoutine == null)
+                eatingRoutine = StartCoroutine(EatAndLeave());
+        }
+        else
+        {
+            Debug.Log($"{name}: Wrong dish, but thanks...");
+
+            OrderManager.Instance.MarkOrderServed(CurrentOrder);
+
+            if (eatingRoutine == null)
+                eatingRoutine = StartCoroutine(EatAndLeave());
+        }
+
+        return true; 
     }
+
 
     private IEnumerator EatAndLeave()
     {

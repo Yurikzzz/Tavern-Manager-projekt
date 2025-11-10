@@ -26,13 +26,8 @@ public class NPCInteractable : Interactable
 
         if (success)
         {
-            Debug.Log($"{name}: Thanks for the {playerCarry.carriedDish.displayName}!");
             playerCarry.ClearDish();
-
-        }
-        else
-        {
-            Debug.Log($"{name}: That’s not what I ordered.");
         }
     }
+
 }

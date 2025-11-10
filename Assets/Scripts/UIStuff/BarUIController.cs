@@ -7,8 +7,13 @@ public class BarUIController : MonoBehaviour
     public GameObject barUIRoot;
 
     [Header("Orders UI")]
-    public Transform ordersListParent;      // OrdersList object
-    public GameObject orderButtonPrefab;    // OrderButton prefab
+    public Transform ordersListParent;
+    public GameObject orderButtonPrefab;
+
+    [Header("Dishes UI")]
+    public Transform dishesGridParent;
+    public GameObject dishButtonPrefab;
+    public Dish[] allDishes;   // assign all available dishes here in Inspector
 
     [Header("References")]
     public PlayerCarry playerCarry;
@@ -16,6 +21,8 @@ public class BarUIController : MonoBehaviour
     private bool isOpen = false;
     private Order selectedOrder;
     private readonly List<GameObject> spawnedOrderButtons = new List<GameObject>();
+    private readonly List<DishButtonUI> dishButtons = new List<DishButtonUI>();
+    private DishButtonUI selectedDishButton;
 
     void Start()
     {
@@ -42,6 +49,7 @@ public class BarUIController : MonoBehaviour
         isOpen = true;
 
         RefreshOrdersList();
+        RefreshDishGrid();
     }
 
     public void Close()
@@ -59,10 +67,10 @@ public class BarUIController : MonoBehaviour
         else Open();
     }
 
-    // Called when the UI opens, or when you later want to refresh
+    // ---------- ORDERS LIST ----------
+
     public void RefreshOrdersList()
     {
-        // Clear old buttons
         foreach (var go in spawnedOrderButtons)
         {
             if (go != null) Destroy(go);
@@ -85,7 +93,7 @@ public class BarUIController : MonoBehaviour
         foreach (var order in OrderManager.Instance.ActiveOrders)
         {
             if (order.isServed)
-                continue; // skip already served orders
+                continue;
 
             GameObject buttonObj = Instantiate(orderButtonPrefab, ordersListParent);
             spawnedOrderButtons.Add(buttonObj);
@@ -96,21 +104,99 @@ public class BarUIController : MonoBehaviour
                 buttonUI.Setup(order, this);
             }
         }
+
+        // After recreating order list, also clear requested highlights
+        UpdateRequestedDishHighlight();
     }
 
-    // Called by OrderButtonUI when a button is clicked
     public void SelectOrder(Order order)
     {
         selectedOrder = order;
         Debug.Log($"BarUI: Selected order for {order.customer.gameObject.name} - {order.dish.displayName}");
-        // Later: we can visually highlight the selected button
+
+        UpdateRequestedDishHighlight();
     }
 
-    // Hook this to the Confirm button's OnClick in the Inspector
-    public void ConfirmSelectedOrder()
+    // ---------- DISH GRID ----------
+
+    public void RefreshDishGrid()
     {
-        if (playerCarry == null || OrderManager.Instance == null)
+        // Clear old dish buttons
+        foreach (Transform child in dishesGridParent)
+        {
+            Destroy(child.gameObject);
+        }
+        dishButtons.Clear();
+        selectedDishButton = null;
+
+        if (dishesGridParent == null)
+        {
+            Debug.LogWarning("BarUIController: dishesGridParent not assigned.");
             return;
+        }
+
+        if (allDishes == null)
+        {
+            Debug.LogWarning("BarUIController: allDishes is empty.");
+            return;
+        }
+
+        foreach (var dish in allDishes)
+        {
+            if (dish == null) continue;
+
+            GameObject btnObj = Instantiate(dishButtonPrefab, dishesGridParent);
+            DishButtonUI btnUI = btnObj.GetComponent<DishButtonUI>();
+
+            if (btnUI != null)
+            {
+                btnUI.Setup(dish, this);
+                dishButtons.Add(btnUI);
+            }
+        }
+
+        // If an order is already selected when refreshing, highlight its requested dish
+        UpdateRequestedDishHighlight();
+    }
+
+    public void SelectDish(DishButtonUI button)
+    {
+        // Deselect previous
+        if (selectedDishButton != null)
+        {
+            selectedDishButton.SetSelected(false);
+        }
+
+        selectedDishButton = button;
+
+        if (selectedDishButton != null)
+        {
+            selectedDishButton.SetSelected(true);
+            Debug.Log($"BarUI: Selected dish {selectedDishButton.Dish.displayName}");
+        }
+    }
+
+    private void UpdateRequestedDishHighlight()
+    {
+        foreach (var btn in dishButtons)
+        {
+            if (btn == null) continue;
+
+            bool isRequested = (selectedOrder != null && btn.Dish == selectedOrder.dish);
+            btn.SetRequested(isRequested);
+        }
+    }
+
+    // ---------- CONFIRM ----------
+
+    // Hook this to Confirm button
+    public void ConfirmSelectedDish()
+    {
+        if (playerCarry == null)
+        {
+            Debug.Log("Bar: No PlayerCarry assigned.");
+            return;
+        }
 
         if (playerCarry.HasDish)
         {
@@ -118,24 +204,24 @@ public class BarUIController : MonoBehaviour
             return;
         }
 
+        if (selectedDishButton == null)
+        {
+            Debug.Log("Bar: No dish selected.");
+            return;
+        }
+
         if (selectedOrder == null)
         {
-            Debug.Log("Bar: No order selected.");
-            return;
+            Debug.Log("Bar: No order selected. You can still carry the dish, but it won't match anyone.");
+            // You *could* require an order; for now we just warn.
         }
 
-        if (selectedOrder.isServed)
-        {
-            Debug.Log("Bar: Selected order is already served.");
-            return;
-        }
+        Dish chosenDish = selectedDishButton.Dish;
 
-        // Give player the dish for the selected order
-        playerCarry.TakeDish(selectedOrder.dish);
+        playerCarry.TakeDish(chosenDish);
 
-        Debug.Log($"Bar: Prepared {selectedOrder.dish.displayName} for {selectedOrder.customer.gameObject.name}");
+        Debug.Log($"Bar: Prepared {chosenDish.displayName}.");
 
-        // For now, just close the UI after confirming
         Close();
     }
 }
