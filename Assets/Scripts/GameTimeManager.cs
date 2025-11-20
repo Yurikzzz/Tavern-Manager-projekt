@@ -3,7 +3,14 @@ using System;
 
 public class GameTimeManager : MonoBehaviour
 {
-    public static GameTimeManager Instance; 
+    public static GameTimeManager Instance;
+
+    [Header("Backgrounds")]
+    public Sprite DayBackground;
+    public Sprite NightBackground;
+
+    [Header("Renderer")]
+    public SpriteRenderer backgroundRenderer;
 
     public enum TimeOfDay { Morning, Afternoon, Night }
     public TimeOfDay CurrentTime { get; private set; } = TimeOfDay.Morning;
@@ -15,11 +22,28 @@ public class GameTimeManager : MonoBehaviour
     void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DontDestroyOnLoad(gameObject); 
+        }
         else
+        {
             Destroy(gameObject);
+            return;
+        }
 
-        Debug.Log("Current day: " + CurrentDay + ", Time: " + CurrentTime);
+        if (backgroundRenderer == null)
+            backgroundRenderer = GetComponent<SpriteRenderer>();
+
+        if (backgroundRenderer == null)
+            backgroundRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        if (backgroundRenderer == null)
+            Debug.LogWarning("GameTimeManager: No SpriteRenderer assigned or found. Assign one in inspector.");
+
+        ApplyBackgroundForTime(CurrentTime);
+
+        Debug.Log($"Current day: {CurrentDay}, Time: {CurrentTime}");
     }
 
     public void AdvanceTime()
@@ -41,8 +65,27 @@ public class GameTimeManager : MonoBehaviour
     public void SetTime(TimeOfDay newTime)
     {
         CurrentTime = newTime;
+        ApplyBackgroundForTime(CurrentTime);
         OnTimeChanged?.Invoke(CurrentTime);
         Debug.Log($"Time set to: {CurrentTime}");
+    }
+
+    void ApplyBackgroundForTime(TimeOfDay time)
+    {
+        if (backgroundRenderer == null) return; 
+
+        switch (time)
+        {
+            case TimeOfDay.Morning:
+                if (DayBackground != null) backgroundRenderer.sprite = DayBackground;
+                break;
+            case TimeOfDay.Afternoon:
+                if (DayBackground != null) backgroundRenderer.sprite = DayBackground;
+                break;
+            case TimeOfDay.Night:
+                if (NightBackground != null) backgroundRenderer.sprite = NightBackground;
+                break;
+        }
     }
 
     public void NextDay()
@@ -54,8 +97,9 @@ public class GameTimeManager : MonoBehaviour
             OnDayChanged?.Invoke(CurrentDay);
             Debug.Log($"New day started: Day {CurrentDay}");
         }
-        else {
+        else
+        {
             Debug.LogWarning("Cannot advance to next day unless it's night.");
-        }       
+        }
     }
 }
