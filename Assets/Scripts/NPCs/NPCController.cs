@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 
 public class NPCController : MonoBehaviour
 {
+    public static event Action<GameObject> OnNpcDestroyed;
+
     public float moveSpeed = 2f;
 
     public Transform exitPoint;
@@ -35,7 +38,7 @@ public class NPCController : MonoBehaviour
 
         Vector3 targetPos = new Vector3(
             targetSeat.position.x,
-            groundY,               
+            groundY,
             transform.position.z
         );
 
@@ -80,7 +83,7 @@ public class NPCController : MonoBehaviour
 
         transform.position = new Vector3(
             targetSeat.position.x,
-            groundY,               
+            groundY,
             transform.position.z
         );
 
@@ -130,7 +133,7 @@ public class NPCController : MonoBehaviour
         float distance = Vector2.Distance(transform.position, targetPos);
         if (distance < 0.05f)
         {
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
     }
 
@@ -140,5 +143,7 @@ public class NPCController : MonoBehaviour
         {
             targetTable.FreeSeat(targetSeat);
         }
+
+        OnNpcDestroyed?.Invoke(gameObject);
     }
 }

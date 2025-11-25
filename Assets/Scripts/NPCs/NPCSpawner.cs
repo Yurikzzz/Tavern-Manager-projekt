@@ -1,22 +1,30 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class NPCSpawner : MonoBehaviour
 {
+    public static event Action<GameObject> OnNpcSpawned;
+
     public GameObject npcPrefab;
-    public Transform spawnPoint;      
+    public Transform spawnPoint;
     public int maxNpcs = 5;
-    public float spawnInterval = 3f;  
+    public float spawnInterval = 3f;
+
+    [Header("Spawn timing")]
+    public float initialSpawnDelay = 5f;
 
     private Coroutine spawnRoutine;
     private List<GameObject> spawnedNpcs = new List<GameObject>();
 
     void Start()
     {
-        GameTimeManager.Instance.OnTimeChanged += OnTimeChanged;
+        if (GameTimeManager.Instance != null)
+            GameTimeManager.Instance.OnTimeChanged += OnTimeChanged;
 
-        OnTimeChanged(GameTimeManager.Instance.CurrentTime);
+        if (GameTimeManager.Instance != null)
+            OnTimeChanged(GameTimeManager.Instance.CurrentTime);
     }
 
     void OnDestroy()
@@ -29,7 +37,7 @@ public class NPCSpawner : MonoBehaviour
     {
         if (time == GameTimeManager.TimeOfDay.Afternoon)
         {
-            StartSpawning();
+            StartSpawning(initialSpawnDelay);
         }
         else
         {
@@ -42,10 +50,10 @@ public class NPCSpawner : MonoBehaviour
         }
     }
 
-    void StartSpawning()
+    void StartSpawning(float initialDelay = 0f)
     {
         if (spawnRoutine == null)
-            spawnRoutine = StartCoroutine(SpawnLoop());
+            spawnRoutine = StartCoroutine(SpawnLoop(initialDelay));
     }
 
     void StopSpawning()
@@ -57,8 +65,11 @@ public class NPCSpawner : MonoBehaviour
         }
     }
 
-    IEnumerator SpawnLoop() 
+    IEnumerator SpawnLoop(float initialDelay)
     {
+        if (initialDelay > 0f)
+            yield return new WaitForSeconds(initialDelay);
+
         while (true)
         {
             spawnedNpcs.RemoveAll(npc => npc == null);
@@ -88,6 +99,8 @@ public class NPCSpawner : MonoBehaviour
         {
             controller.exitPoint = spawnPoint;
         }
+
+        OnNpcSpawned?.Invoke(npc);
     }
 
     void ClearAllNpcs()

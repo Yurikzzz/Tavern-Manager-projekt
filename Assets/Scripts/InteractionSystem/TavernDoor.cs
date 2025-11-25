@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,15 +12,21 @@ public class TavernDoor : Interactable
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button cancelButton;
 
+    [Header("Auto-open settings")]
+    [SerializeField] private float openDuration = 1f;
+
     private SpriteRenderer spriteRenderer;
     private bool isOpen = false;
     private enum PendingAction { None, Open, Close }
     private PendingAction pendingAction = PendingAction.None;
 
+    private Coroutine openSpriteRoutine;
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = closedSprite;
+        spriteRenderer.flipX = false;
 
         if (confirmationPanel != null)
         {
@@ -37,9 +44,56 @@ public class TavernDoor : Interactable
         }
     }
 
+    private void OnEnable()
+    {
+        NPCSpawner.OnNpcSpawned += HandleNpcSpawned;
+        NPCController.OnNpcDestroyed += HandleNpcDestroyed;
+    }
+
+    private void OnDisable()
+    {
+        NPCSpawner.OnNpcSpawned -= HandleNpcSpawned;
+        NPCController.OnNpcDestroyed -= HandleNpcDestroyed;
+    }
+
+    private void HandleNpcSpawned(GameObject npc)
+    {
+        if (openSpriteRoutine != null)
+            StopCoroutine(openSpriteRoutine);
+
+        openSpriteRoutine = StartCoroutine(ShowOpenSpriteTemporarily(openDuration));
+    }
+
+    private void HandleNpcDestroyed(GameObject npc)
+    {
+        // show open sprite when NPC leaves (gets destroyed)
+        if (openSpriteRoutine != null)
+            StopCoroutine(openSpriteRoutine);
+
+        openSpriteRoutine = StartCoroutine(ShowOpenSpriteTemporarily(openDuration));
+    }
+
+    private IEnumerator ShowOpenSpriteTemporarily(float seconds)
+    {
+        spriteRenderer.sprite = openSprite;
+        spriteRenderer.flipX = true;
+
+        yield return new WaitForSeconds(seconds);
+
+        spriteRenderer.sprite = closedSprite;
+        spriteRenderer.flipX = false;
+
+        openSpriteRoutine = null;
+    }
+
     public override void Interact()
     {
         var timeManager = GameTimeManager.Instance;
+        if (timeManager == null)
+        {
+            Debug.LogWarning("GameTimeManager instance missing.");
+            return;
+        }
 
         switch (timeManager.CurrentTime)
         {
@@ -80,6 +134,12 @@ public class TavernDoor : Interactable
         }
 
         var timeManager = GameTimeManager.Instance;
+        if (timeManager == null)
+        {
+            Debug.LogWarning("GameTimeManager instance missing.");
+            HideConfirmation();
+            return;
+        }
 
         if (pendingAction == PendingAction.Open)
         {
@@ -114,7 +174,6 @@ public class TavernDoor : Interactable
     {
         if (isOpen) return;
         isOpen = true;
-        spriteRenderer.sprite = openSprite;
         Debug.Log("The tavern is now open for business!");
     }
 
@@ -122,7 +181,6 @@ public class TavernDoor : Interactable
     {
         if (!isOpen) return;
         isOpen = false;
-        spriteRenderer.sprite = closedSprite;
         Debug.Log("The tavern is now closed for the night!");
     }
 }
