@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class OrderButtonUI : MonoBehaviour
 {
     public Image dishIcon;
-    public Text label;   // Or TextMeshProUGUI if you use TMP
+    public TextMeshProUGUI label;
 
     private Order order;
     private BarUIController barUI;

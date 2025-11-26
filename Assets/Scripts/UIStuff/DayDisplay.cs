@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class DayDisplay : MonoBehaviour
 {
-    [SerializeField] private Text dayText;
+    [SerializeField] private TextMeshProUGUI dayText;
 
     void Start()
     {

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TavernDoor : Interactable
 {
@@ -8,7 +9,7 @@ public class TavernDoor : Interactable
     [SerializeField] private Sprite openSprite;
     [Header("Confirmation UI")]
     [SerializeField] private GameObject confirmationPanel;
-    [SerializeField] private Text confirmationLabel;
+    [SerializeField] private TextMeshProUGUI confirmationLabel;
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button cancelButton;
 

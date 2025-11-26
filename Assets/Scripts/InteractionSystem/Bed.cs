@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Bed : Interactable
 {
     [Header("Confirmation UI")]
     [SerializeField] private GameObject confirmationPanel;
-    [SerializeField] private Text confirmationLabel;
+    [SerializeField] private TextMeshProUGUI confirmationLabel;
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button cancelButton;
 
@@ -26,6 +27,19 @@ public class Bed : Interactable
 
     public override void Interact()
     {
+        var timeManager = GameTimeManager.Instance;
+        if (timeManager == null)
+        {
+            Debug.LogWarning("GameTimeManager instance missing.");
+            return;
+        }
+
+        if (timeManager.CurrentTime != GameTimeManager.TimeOfDay.Night)
+        {
+            Debug.Log("You can only sleep at night.");
+            return;
+        }
+
         ShowConfirmation();
     }
 
@@ -38,7 +52,7 @@ public class Bed : Interactable
         }
 
         pendingAction = PendingAction.Sleep;
-        confirmationLabel.text = "Are you sure you want to sleep and advance to the next day?";
+        confirmationLabel.text = "Are you sure you want to advance to the next day?";
         confirmationPanel.SetActive(true);
     }
 

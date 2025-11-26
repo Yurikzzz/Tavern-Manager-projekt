@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DishButtonUI : MonoBehaviour
 {
     public Image icon;
-    public Text label;                // or TextMeshProUGUI if you use TMP
-    public Image selectedBorder;      // border when player selects this dish
-    public Image requestedBorder;     // border when this is the requested dish (optional)
+    public TextMeshProUGUI label;    
+    public Image selectedBorder;
+    public Image requestedBorder;
 
     private Dish dish;
     private BarUIController barUI;
