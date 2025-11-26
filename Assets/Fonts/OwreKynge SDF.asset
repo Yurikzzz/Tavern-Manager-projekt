@@ -63,7 +63,7 @@ Material:
     - _GlowOffset: 0
     - _GlowOuter: 0.05
     - _GlowPower: 0.75
-    - _GradientScale: 10
+    - _GradientScale: 7
     - _LightAngle: 3.1416
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
@@ -73,9 +73,9 @@ Material:
     - _OutlineWidth: 0
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
-    - _ScaleRatioA: 0.9
-    - _ScaleRatioB: 0.73125
-    - _ScaleRatioC: 0.73125
+    - _ScaleRatioA: 0.85714287
+    - _ScaleRatioB: 0.6964286
+    - _ScaleRatioC: 0.6964286
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
@@ -86,8 +86,8 @@ Material:
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
-    - _TextureHeight: 1024
-    - _TextureWidth: 1024
+    - _TextureHeight: 2048
+    - _TextureWidth: 2048
     - _UnderlayDilate: 0
     - _UnderlayOffsetX: 0
     - _UnderlayOffsetY: 0
@@ -126,39 +126,39 @@ MonoBehaviour:
     m_FaceIndex: 0
     m_FamilyName: OwreKynge
     m_StyleName: Medium
-    m_PointSize: 90
+    m_PointSize: 64
     m_Scale: 1
     m_UnitsPerEM: 1024
-    m_LineHeight: 98.08594
-    m_AscentLine: 67.5
-    m_CapLine: 57
-    m_MeanLine: 40
+    m_LineHeight: 69.75
+    m_AscentLine: 48
+    m_CapLine: 40
+    m_MeanLine: 28
     m_Baseline: 0
-    m_DescentLine: -22.5
-    m_SuperscriptOffset: 67.5
+    m_DescentLine: -16
+    m_SuperscriptOffset: 48
     m_SuperscriptSize: 0.5
-    m_SubscriptOffset: -22.5
+    m_SubscriptOffset: -16
     m_SubscriptSize: 0.5
-    m_UnderlineOffset: -13.447266
-    m_UnderlineThickness: 4.482422
-    m_StrikethroughOffset: 16
-    m_StrikethroughThickness: 4.482422
-    m_TabWidth: 28
+    m_UnderlineOffset: -9.5625
+    m_UnderlineThickness: 3.1875
+    m_StrikethroughOffset: 11.2
+    m_StrikethroughThickness: 3.1875
+    m_TabWidth: 20
   m_Material: {fileID: -7378335727421135212}
   m_SourceFontFileGUID: b48ccd895c84b1b439afa7cf836cec72
   m_CreationSettings:
     sourceFontFileName: 
     sourceFontFileGUID: b48ccd895c84b1b439afa7cf836cec72
     faceIndex: 0
-    pointSizeSamplingMode: 0
-    pointSize: 90
-    padding: 9
-    paddingMode: 2
+    pointSizeSamplingMode: 1
+    pointSize: 64
+    padding: 6
+    paddingMode: 1
     packingMode: 0
-    atlasWidth: 1024
-    atlasHeight: 1024
-    characterSetSelectionMode: 7
-    characterSequence: 
+    atlasWidth: 2048
+    atlasHeight: 2048
+    characterSetSelectionMode: 0
+    characterSequence: 32 - 126, 160, 8203, 8230, 9633
     referencedFontAssetGUID: 
     referencedTextAssetGUID: 
     fontStyle: 0
@@ -177,16 +177,16 @@ MonoBehaviour:
   m_IsMultiAtlasTexturesEnabled: 0
   m_GetFontFeatures: 1
   m_ClearDynamicDataOnBuild: 1
-  m_AtlasWidth: 1024
-  m_AtlasHeight: 1024
-  m_AtlasPadding: 9
+  m_AtlasWidth: 2048
+  m_AtlasHeight: 2048
+  m_AtlasPadding: 6
   m_AtlasRenderMode: 4165
   m_UsedGlyphRects: []
   m_FreeGlyphRects:
   - m_X: 0
     m_Y: 0
-    m_Width: 1023
-    m_Height: 1023
+    m_Width: 2047
+    m_Height: 2047
   m_FontFeatureTable:
     m_MultipleSubstitutionRecords: []
     m_LigatureSubstitutionRecords: []
@@ -256,7 +256,7 @@ Texture2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: OwreKynge Atlas
+  m_Name: OwreKynge SDF Atlas
   m_ImageContentsHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000

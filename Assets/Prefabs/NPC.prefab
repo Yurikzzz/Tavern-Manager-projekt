@@ -462,5 +462,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b24245be9da2fea44b250f4417295b5b, type: 2}
   - {fileID: 11400000, guid: dc8ad9ff758ed634ab6f4b339b4fd724, type: 2}
   - {fileID: 11400000, guid: 9f6d9f33ac4c56546ad0f732cf07a023, type: 2}
+  - {fileID: 11400000, guid: 3ed820de68482674681547638a112416, type: 2}
   eatingDuration: 10
   deliveryMarker: {fileID: 3818314321650869343}
