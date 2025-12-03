@@ -67,7 +67,6 @@ public class TavernDoor : Interactable
 
     private void HandleNpcDestroyed(GameObject npc)
     {
-        // show open sprite when NPC leaves (gets destroyed)
         if (openSpriteRoutine != null)
             StopCoroutine(openSpriteRoutine);
 

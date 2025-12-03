@@ -48,7 +48,7 @@ public class OrderManager : MonoBehaviour
 
     private void HandleDayChanged(int newDay)
     {
-        Debug.Log($"OrderManager: New day {newDay}, clearing all orders.");
+        Debug.Log($"OrderManager: New day (day {newDay}), clearing all orders.");
         ClearAllOrders();
     }
 
