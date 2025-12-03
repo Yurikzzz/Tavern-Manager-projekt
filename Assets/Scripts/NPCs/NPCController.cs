@@ -22,6 +22,13 @@ public class NPCController : MonoBehaviour
         groundY = transform.position.y;
 
         FindSeat();
+
+        if (exitPoint == null)
+        {
+            var tavernDoor = FindObjectOfType<TavernDoor>();
+            if (tavernDoor != null)
+                exitPoint = tavernDoor.transform;
+        }
     }
 
     void Update()
@@ -92,6 +99,11 @@ public class NPCController : MonoBehaviour
         {
             npcOrder.StartOrder();
         }
+
+        var patience = GetComponent<CustomerPatience>();
+        if (patience != null)
+            patience.SitAndStartWaiting();
+
     }
     public void StartLeaving()
     {
@@ -99,6 +111,8 @@ public class NPCController : MonoBehaviour
             return;
 
         isLeaving = true;
+
+        isSitting = false;
 
         if (targetTable != null && targetSeat != null)
         {
@@ -114,8 +128,17 @@ public class NPCController : MonoBehaviour
     {
         if (exitPoint == null)
         {
-            Destroy(gameObject);
-            return;
+            var tavernDoor = FindObjectOfType<TavernDoor>();
+            if (tavernDoor != null)
+            {
+                exitPoint = tavernDoor.transform;
+            }
+            else
+            {
+                Debug.LogWarning($"{name}: exitPoint not set — destroying in 0.5s. Assign exitPoint on the NPC prefab or set a TavernDoor in the scene.");
+                Destroy(gameObject, 0.5f);
+                return;
+            }
         }
 
         Vector3 targetPos = new Vector3(

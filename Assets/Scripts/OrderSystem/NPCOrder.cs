@@ -66,6 +66,7 @@ public class NPCOrder : MonoBehaviour
 
     public bool TryServe(Dish dishFromPlayer)
     {
+        var patience = GetComponent<CustomerPatience>();
         if (dishFromPlayer == null)
             return false;
 
@@ -87,6 +88,9 @@ public class NPCOrder : MonoBehaviour
         }
 
         OrderManager.Instance.MarkOrderServed(CurrentOrder);
+        
+        if (patience != null)
+            patience.OnServed();
 
         HideDeliveryMarker();
 
