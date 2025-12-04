@@ -11,7 +11,7 @@ public class CustomerPatience : MonoBehaviour
 
     [Header("Bar Elements")]
     public Transform barRoot;
-    public Transform barFill;                  
+    public Transform barFill;
     private Vector3 barFillBaseScale;
 
     private NPCController npcController;
@@ -21,7 +21,7 @@ public class CustomerPatience : MonoBehaviour
         currentPatience = maxPatience;
 
         if (barFill != null)
-            barFillBaseScale = barFill.localScale; 
+            barFillBaseScale = barFill.localScale;
 
         npcController = GetComponent<NPCController>();
         if (npcController == null)
@@ -88,9 +88,11 @@ public class CustomerPatience : MonoBehaviour
 
     private void OnPatienceExpired()
     {
-        
         if (barRoot != null)
             barRoot.gameObject.SetActive(false);
+
+        // count as customer who left without being served
+        DailyRewardManager.Instance?.RecordLeftWithoutServed();
 
         if (npcController != null)
         {
