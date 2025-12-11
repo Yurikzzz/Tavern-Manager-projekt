@@ -6,7 +6,7 @@ public class DailyRewardManager : MonoBehaviour
 
     [Header("Base rewards per customer")]
     public int coinsPerCustomer = 10;
-    public int popularityPerCustomer = 1;
+    public int popularityPerCustomer = 5;
 
     [Header("UI")]
     public GameObject daySummaryPrefab; // assign prefab in inspector

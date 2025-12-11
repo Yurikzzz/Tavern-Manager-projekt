@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerHUD : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class PlayerHUD : MonoBehaviour
     public Text carryingLabel;         
     public Image carryingIcon;     
     public Button dropButton;  
+
+    [Header("Resources")]
+    public TMP_Text coinsText;
+    public TMP_Text popularityText;
 
     [Header("Input")]
     public KeyCode dropKey = KeyCode.Q;
@@ -33,12 +38,27 @@ public class PlayerHUD : MonoBehaviour
             dropButton.onClick.RemoveAllListeners();
             dropButton.onClick.AddListener(OnDropButtonClicked);
         }
+
+        if (PlayerProgress.Instance != null)
+        {
+            PlayerProgress.Instance.OnCoinsChanged += UpdateCoins;
+            PlayerProgress.Instance.OnPopularityChanged += UpdatePopularity;
+            // Initialize
+            UpdateCoins(PlayerProgress.Instance.Coins);
+            UpdatePopularity(PlayerProgress.Instance.Popularity);
+        }
     }
 
     void OnDestroy()
     {
         if (playerCarry != null)
             playerCarry.OnCarryChanged -= UpdateUI;
+
+        if (PlayerProgress.Instance != null)
+        {
+            PlayerProgress.Instance.OnCoinsChanged -= UpdateCoins;
+            PlayerProgress.Instance.OnPopularityChanged -= UpdatePopularity;
+        }
 
         if (dropButton != null)
             dropButton.onClick.RemoveAllListeners();
@@ -88,5 +108,17 @@ public class PlayerHUD : MonoBehaviour
         {
             playerCarry.Drop();
         }
+    }
+
+    void UpdateCoins(int amount)
+    {
+        if (coinsText != null)
+            coinsText.text = "Coins: " + amount.ToString();
+    }
+
+    void UpdatePopularity(int amount)
+    {
+        if (popularityText != null)
+            popularityText.text = "Popularity: " + amount.ToString();
     }
 }
