@@ -202,7 +202,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1748102820}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3946,7 +3946,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinsPerCustomer: 10
-  popularityPerCustomer: 1
+  popularityPerCustomer: 2
   daySummaryPrefab: {fileID: 7483826049666826021, guid: 6b17762380119ec48addc323c8551f02, type: 3}
 --- !u!1 &1251963093
 GameObject:

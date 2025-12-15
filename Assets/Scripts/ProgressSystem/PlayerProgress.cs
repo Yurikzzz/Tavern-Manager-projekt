@@ -27,7 +27,6 @@ public class PlayerProgress : MonoBehaviour
 
     void Start()
     {
-        // Notify initial values
         OnCoinsChanged?.Invoke(Coins);
         OnPopularityChanged?.Invoke(Popularity);
     }

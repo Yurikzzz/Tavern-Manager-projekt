@@ -9,7 +9,7 @@ public class DailyRewardManager : MonoBehaviour
     public int popularityPerCustomer = 5;
 
     [Header("UI")]
-    public GameObject daySummaryPrefab; // assign prefab in inspector
+    public GameObject daySummaryPrefab;
 
     private int customersServed = 0;
     private int customersLeft = 0;
@@ -28,7 +28,6 @@ public class DailyRewardManager : MonoBehaviour
 
     void Start()
     {
-        // in case GameTimeManager wasn't ready in Awake
         TrySubscribeToGameTime();
     }
 
@@ -51,9 +50,23 @@ public class DailyRewardManager : MonoBehaviour
     public void RecordServed(bool correct)
     {
         customersServed++;
-        float mul = correct ? 1f : 0.25f;
-        coinsGained += Mathf.RoundToInt(coinsPerCustomer * mul);
-        popularityGained += Mathf.RoundToInt(popularityPerCustomer * mul);
+        float mul = correct ? 1f : 0.5f;
+        int gainedCoins = Mathf.RoundToInt(coinsPerCustomer * mul);
+        int gainedPopularity = Mathf.RoundToInt(popularityPerCustomer * mul);
+
+        coinsGained += gainedCoins;
+        popularityGained += gainedPopularity;
+
+        if (PlayerProgress.Instance != null)
+        {
+            PlayerProgress.Instance.AddCoins(gainedCoins);
+            PlayerProgress.Instance.AddPopularity(gainedPopularity);
+            Debug.Log($"DailyRewardManager: Applied instant rewards: +{gainedCoins} coins, +{gainedPopularity} popularity.");
+        }
+        else
+        {
+            Debug.LogWarning("DailyRewardManager: No PlayerProgress found; instant rewards not applied.");
+        }
     }
 
     public void RecordLeftWithoutServed()
@@ -71,13 +84,11 @@ public class DailyRewardManager : MonoBehaviour
     {
         if (daySummaryPrefab == null)
         {
-            Debug.LogWarning("DailyRewardManager: daySummaryPrefab not assigned. Applying rewards immediately.");
-            ApplyRewards();
+            Debug.LogWarning("DailyRewardManager: daySummaryPrefab not assigned. Rewards are applied instantly; just resetting daily counters.");
             ResetDaily();
             return;
         }
 
-        // instantiate under Canvas if available so UI is visible
         var canvas = FindObjectOfType<Canvas>();
         GameObject go;
         if (canvas != null)
@@ -97,12 +108,10 @@ public class DailyRewardManager : MonoBehaviour
         {
             Debug.LogWarning("DailyRewardManager: daySummaryPrefab does not contain DaySummaryUI component.");
             Destroy(go);
-            ApplyRewards();
             ResetDaily();
         }
     }
 
-    // Called by UI confirm
     public void ApplyRewards()
     {
         if (PlayerProgress.Instance != null)
@@ -125,7 +134,6 @@ public class DailyRewardManager : MonoBehaviour
         popularityGained = 0;
     }
 
-    // optional getters
     public int CustomersServed => customersServed;
     public int CustomersLeft => customersLeft;
     public int CoinsGained => coinsGained;

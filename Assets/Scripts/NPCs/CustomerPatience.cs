@@ -15,6 +15,7 @@ public class CustomerPatience : MonoBehaviour
     private Vector3 barFillBaseScale;
 
     private NPCController npcController;
+    private NPCOrder npcOrder;
 
     private void Awake()
     {
@@ -27,6 +28,43 @@ public class CustomerPatience : MonoBehaviour
         if (npcController == null)
         {
             npcController = GetComponentInParent<NPCController>();
+        }
+
+        npcOrder = GetComponent<NPCOrder>();
+        if (npcOrder == null)
+        {
+            npcOrder = GetComponentInParent<NPCOrder>();
+        }
+    }
+
+    private void Start()
+    {
+        if (GameTimeManager.Instance != null)
+            GameTimeManager.Instance.OnTimeChanged += HandleTimeChanged;
+    }
+
+    private void OnEnable()
+    {
+        if (GameTimeManager.Instance != null)
+            GameTimeManager.Instance.OnTimeChanged += HandleTimeChanged;
+    }
+
+    private void OnDisable()
+    {
+        if (GameTimeManager.Instance != null)
+            GameTimeManager.Instance.OnTimeChanged -= HandleTimeChanged;
+    }
+
+    private void HandleTimeChanged(GameTimeManager.TimeOfDay newTime)
+    {
+        if (newTime == GameTimeManager.TimeOfDay.Night)
+        {
+            if (npcOrder != null && npcOrder.HasOrder)
+            {
+                waiting = false; 
+                if (barRoot != null)
+                    barRoot.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -64,12 +102,10 @@ public class CustomerPatience : MonoBehaviour
 
         float t = currentPatience / maxPatience;
 
-        // scale horizontally
         Vector3 s = barFillBaseScale;
         s.x *= t;
         barFill.localScale = s;
 
-        // optional: color change
         var sr = barFill.GetComponent<SpriteRenderer>();
         if (sr != null)
         {
@@ -91,7 +127,6 @@ public class CustomerPatience : MonoBehaviour
         if (barRoot != null)
             barRoot.gameObject.SetActive(false);
 
-        // count as customer who left without being served
         DailyRewardManager.Instance?.RecordLeftWithoutServed();
 
         if (npcController != null)

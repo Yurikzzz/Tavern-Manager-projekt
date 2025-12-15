@@ -12,6 +12,7 @@ public class DaySummaryUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI popularityText;
     [SerializeField] private Button confirmButton;
 
+    // kept for backward compatibility but not used to apply rewards here
     private int coinsToApply;
     private int popularityToApply;
 
@@ -39,8 +40,7 @@ public class DaySummaryUI : MonoBehaviour
 
     public void OnConfirm()
     {
-        Debug.Log("DaySummaryUI: Confirm pressed. Applying rewards.");
-        DailyRewardManager.Instance?.ApplyRewards();
+        Debug.Log("DaySummaryUI: Confirm pressed. Closing summary.");
         DailyRewardManager.Instance?.ResetDaily();
 
         Time.timeScale = 1f;
