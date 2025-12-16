@@ -102,7 +102,8 @@ public class DailyRewardManager : MonoBehaviour
         var ui = go.GetComponent<DaySummaryUI>();
         if (ui != null)
         {
-            ui.SetupAndShow(day, customersServed, customersLeft, coinsGained, popularityGained);
+            int displayDay = Mathf.Max(1, day - 1);
+            ui.SetupAndShow(displayDay, customersServed, customersLeft, coinsGained, popularityGained);
         }
         else
         {
