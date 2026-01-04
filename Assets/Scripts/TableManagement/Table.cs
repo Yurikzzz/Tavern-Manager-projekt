@@ -3,12 +3,19 @@ using UnityEngine;
 
 public class Table : MonoBehaviour
 {
-    public Transform[] seats;
-    private List<Transform> occupiedSeats = new List<Transform>();
+    [System.Serializable]
+    public class Seat
+    {
+        public Transform seatTransform;
+        public bool faceLeft;
+    }
+
+    public Seat[] seats;
+    private List<Seat> occupiedSeats = new List<Seat>();
 
     public bool HasFreeSeat => occupiedSeats.Count < seats.Length;
 
-    public Transform GetFreeSeat()
+    public Seat GetFreeSeat()
     {
         foreach (var seat in seats)
         {
@@ -18,15 +25,14 @@ public class Table : MonoBehaviour
         return null;
     }
 
-    public void OccupySeat(Transform seat)
+    public void OccupySeat(Seat seat)
     {
         if (!occupiedSeats.Contains(seat))
             occupiedSeats.Add(seat);
     }
 
-    public void FreeSeat(Transform seat)
+    public void FreeSeat(Seat seat)
     {
         occupiedSeats.Remove(seat);
     }
 }
-

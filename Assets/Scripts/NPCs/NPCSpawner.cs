@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class NPCSpawner : MonoBehaviour
 {
-    // Event raised when a new NPC is spawned
     public static event Action<GameObject> OnNpcSpawned;
 
     public GameObject npcPrefab;
@@ -47,13 +46,11 @@ public class NPCSpawner : MonoBehaviour
 
             if (time == GameTimeManager.TimeOfDay.Night)
             {
-                // Instead of destroying NPCs immediately, ask them to leave
                 ClearAllNpcs();
             }
         }
     }
 
-    // optional initialDelay (defaults to 0)
     void StartSpawning(float initialDelay = 0f)
     {
         if (spawnRoutine == null)
@@ -104,14 +101,12 @@ public class NPCSpawner : MonoBehaviour
             controller.exitPoint = spawnPoint;
         }
 
-        // Notify listeners that an NPC was spawned
         OnNpcSpawned?.Invoke(npc);
     }
 
     void ClearAllNpcs()
     {
-        // Request all existing NPCs to start leaving instead of destroying them immediately.
-        // We keep them in spawnedNpcs so the normal destroy flow (when they reach exit) will remove them.
+        
         for (int i = 0; i < spawnedNpcs.Count; i++)
         {
             var npc = spawnedNpcs[i];
@@ -124,10 +119,8 @@ public class NPCSpawner : MonoBehaviour
             }
             else
             {
-                // fallback: destroy if it doesn't have a controller
                 Destroy(npc);
             }
         }
-        // don't clear spawnedNpcs here — entries will be removed over time when NPCs are destroyed
     }
 }

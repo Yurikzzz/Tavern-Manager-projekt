@@ -190,8 +190,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seats:
-  - {fileID: 4494228344241244847}
-  - {fileID: 4139829427289497332}
+  - seatTransform: {fileID: 4494228344241244847}
+    faceLeft: 1
+  - seatTransform: {fileID: 4139829427289497332}
+    faceLeft: 0
 --- !u!1 &6772825159311759256
 GameObject:
   m_ObjectHideFlags: 0

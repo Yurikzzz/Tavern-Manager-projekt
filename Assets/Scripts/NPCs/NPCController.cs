@@ -6,20 +6,25 @@ public class NPCController : MonoBehaviour
     public static event Action<GameObject> OnNpcDestroyed;
 
     public float moveSpeed = 2f;
-
     public Transform exitPoint;
 
-    private Transform targetSeat;
+    private Table.Seat targetSeat;
     private Table targetTable;
+
     private bool isSitting = false;
     private bool isLeaving = false;
 
-
     private float groundY;
+
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
 
     void Start()
     {
         groundY = transform.position.y;
+
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         FindSeat();
 
@@ -39,15 +44,16 @@ public class NPCController : MonoBehaviour
             return;
         }
 
-
         if (targetSeat == null || isSitting)
             return;
 
         Vector3 targetPos = new Vector3(
-            targetSeat.position.x,
+            targetSeat.seatTransform.position.x,
             groundY,
             transform.position.z
         );
+
+        UpdateAnimation(targetPos);
 
         transform.position = Vector3.MoveTowards(
             transform.position,
@@ -71,17 +77,17 @@ public class NPCController : MonoBehaviour
             if (!table.HasFreeSeat)
                 continue;
 
-            Transform seat = table.GetFreeSeat();
+            Table.Seat seat = table.GetFreeSeat();
             if (seat != null)
             {
                 targetSeat = seat;
                 targetTable = table;
-                targetTable.OccupySeat(targetSeat);
+                targetTable.OccupySeat(seat);
                 return;
             }
         }
 
-        Debug.Log("NPC: No free seat found, just standing around.");
+        Debug.Log("NPC: No free seat found.");
     }
 
     void SitDown()
@@ -89,30 +95,35 @@ public class NPCController : MonoBehaviour
         isSitting = true;
 
         transform.position = new Vector3(
-            targetSeat.position.x,
+            targetSeat.seatTransform.position.x,
             groundY,
             transform.position.z
         );
 
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isSitting", true);
+
+        spriteRenderer.flipX = targetSeat.faceLeft;
+
         NPCOrder npcOrder = GetComponent<NPCOrder>();
         if (npcOrder != null)
-        {
             npcOrder.StartOrder();
-        }
 
         var patience = GetComponent<CustomerPatience>();
         if (patience != null)
             patience.SitAndStartWaiting();
-
     }
+
     public void StartLeaving()
     {
         if (isLeaving)
             return;
 
         isLeaving = true;
-
         isSitting = false;
+
+        animator.SetBool("isSitting", false);
+        animator.SetBool("isWalking", true);
 
         if (targetTable != null && targetSeat != null)
         {
@@ -120,25 +131,14 @@ public class NPCController : MonoBehaviour
             targetTable = null;
             targetSeat = null;
         }
-
-        Debug.Log(name + " is leaving the tavern.");
     }
 
-    private void HandleLeaving()
+    void HandleLeaving()
     {
         if (exitPoint == null)
         {
-            var tavernDoor = FindObjectOfType<TavernDoor>();
-            if (tavernDoor != null)
-            {
-                exitPoint = tavernDoor.transform;
-            }
-            else
-            {
-                Debug.LogWarning($"{name}: exitPoint not set — destroying in 0.5s. Assign exitPoint on the NPC prefab or set a TavernDoor in the scene.");
-                Destroy(gameObject, 0.5f);
-                return;
-            }
+            Destroy(gameObject, 0.5f);
+            return;
         }
 
         Vector3 targetPos = new Vector3(
@@ -146,6 +146,8 @@ public class NPCController : MonoBehaviour
             groundY,
             transform.position.z
         );
+
+        UpdateAnimation(targetPos);
 
         transform.position = Vector3.MoveTowards(
             transform.position,
@@ -158,6 +160,18 @@ public class NPCController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    void UpdateAnimation(Vector3 targetPos)
+    {
+        float horizontalDelta = targetPos.x - transform.position.x;
+        bool isMoving = Mathf.Abs(horizontalDelta) > 0.01f;
+
+        animator.SetBool("isWalking", isMoving);
+        animator.SetBool("isSitting", isSitting);
+
+        if (isMoving)
+            spriteRenderer.flipX = horizontalDelta < 0;
     }
 
     void OnDestroy()
