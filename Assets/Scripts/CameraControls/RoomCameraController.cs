@@ -19,12 +19,10 @@ public class RoomCameraController : MonoBehaviour
     {
         if(currentTarget != null)
         {
-            // Smoothly move toward target position
             Vector3 targetPos = new Vector3(currentTarget.position.x, currentTarget.position.y, transform.position.z);
             transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * moveSpeed);
         }
 
-        // Smoothly interpolate zoom
         cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime * zoomSpeed);
     }
 
@@ -32,6 +30,15 @@ public class RoomCameraController : MonoBehaviour
     {
         currentTarget = newTarget;
         targetZoom = newZoom;
+    }
+
+    public void SnapImmediately()
+    {
+        if (currentTarget != null)
+        {
+            Vector3 targetPos = new Vector3(currentTarget.position.x, currentTarget.position.y, transform.position.z);
+            transform.position = targetPos;
+        }
     }
 }
 
