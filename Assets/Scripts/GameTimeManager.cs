@@ -24,7 +24,7 @@ public class GameTimeManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); 
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -39,7 +39,7 @@ public class GameTimeManager : MonoBehaviour
             backgroundRenderer = GetComponentInChildren<SpriteRenderer>();
 
         if (backgroundRenderer == null)
-            Debug.LogWarning("GameTimeManager: No SpriteRenderer assigned or found. Assign one in inspector.");
+            Debug.LogWarning("GameTimeManager: No SpriteRenderer assigned. Assign one in inspector.");
 
         ApplyBackgroundForTime(CurrentTime);
 
@@ -72,7 +72,7 @@ public class GameTimeManager : MonoBehaviour
 
     void ApplyBackgroundForTime(TimeOfDay time)
     {
-        if (backgroundRenderer == null) return; 
+        if (backgroundRenderer == null) return;
 
         switch (time)
         {
@@ -93,7 +93,9 @@ public class GameTimeManager : MonoBehaviour
         if (CurrentTime == TimeOfDay.Night)
         {
             CurrentDay++;
+
             SetTime(TimeOfDay.Morning);
+
             OnDayChanged?.Invoke(CurrentDay);
             Debug.Log($"New day started: Day {CurrentDay}");
         }

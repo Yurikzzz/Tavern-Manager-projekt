@@ -76,7 +76,25 @@ public class DailyRewardManager : MonoBehaviour
 
     private void OnDayChanged(int newDay)
     {
-        Debug.Log($"DailyRewardManager: Day changed -> {newDay}, showing summary.");
+        Debug.Log($"DailyRewardManager: Day changed -> {newDay}. Collecting Rent...");
+
+        if (RentalManager.Instance != null)
+        {
+            int rentCoins = 0;
+            int rentPop = 0;
+
+            RentalManager.Instance.ProcessNightlyRentals(out rentCoins, out rentPop);
+
+            coinsGained += rentCoins;
+            popularityGained += rentPop;
+
+            if (PlayerProgress.Instance != null)
+            {
+                PlayerProgress.Instance.AddCoins(rentCoins);
+                PlayerProgress.Instance.AddPopularity(rentPop);
+            }
+        }
+
         ShowSummary(newDay);
     }
 

@@ -12,7 +12,6 @@ public class DaySummaryUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI popularityText;
     [SerializeField] private Button confirmButton;
 
-    // kept for backward compatibility but not used to apply rewards here
     private int coinsToApply;
     private int popularityToApply;
 
