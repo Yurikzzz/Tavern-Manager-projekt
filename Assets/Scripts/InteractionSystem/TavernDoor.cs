@@ -49,12 +49,18 @@ public class TavernDoor : Interactable
     {
         NPCSpawner.OnNpcSpawned += HandleNpcSpawned;
         NPCController.OnNpcDestroyed += HandleNpcDestroyed;
+
+        RentalGuestSpawner.OnGuestArrived += HandleNpcSpawned;
+        RentalGuestController.OnGuestLeft += HandleNpcDestroyed;
     }
 
     private void OnDisable()
     {
         NPCSpawner.OnNpcSpawned -= HandleNpcSpawned;
         NPCController.OnNpcDestroyed -= HandleNpcDestroyed;
+
+        RentalGuestSpawner.OnGuestArrived -= HandleNpcSpawned;
+        RentalGuestController.OnGuestLeft -= HandleNpcDestroyed;
     }
 
     private void HandleNpcSpawned(GameObject npc)

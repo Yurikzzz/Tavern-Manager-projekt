@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 
 public class RentalGuestSpawner : MonoBehaviour
@@ -14,6 +15,8 @@ public class RentalGuestSpawner : MonoBehaviour
 
     private Coroutine spawnRoutine;
     private GameObject currentGuest;
+
+    public static event Action<GameObject> OnGuestArrived;
 
     void Start()
     {
@@ -60,7 +63,8 @@ public class RentalGuestSpawner : MonoBehaviour
 
         while (true)
         {
-            float waitTime = Random.Range(minSpawnTime, maxSpawnTime);
+            float waitTime = UnityEngine.Random.Range(minSpawnTime, maxSpawnTime);
+
             yield return new WaitForSeconds(waitTime);
 
             while (currentGuest != null)
@@ -76,13 +80,15 @@ public class RentalGuestSpawner : MonoBehaviour
     {
         if (rentalGuestPrefab == null) return;
 
-        currentGuest = Instantiate(rentalGuestPrefab, spawnPoint.position, Quaternion.identity);
+        GameObject guest = Instantiate(rentalGuestPrefab, spawnPoint.position, Quaternion.identity);
 
-        RentalGuestController controller = currentGuest.GetComponent<RentalGuestController>();
+        RentalGuestController controller = guest.GetComponent<RentalGuestController>();
         if (controller != null)
         {
             controller.barPosition = barCheckInPoint;
             controller.exitPosition = spawnPoint;
         }
+
+        OnGuestArrived?.Invoke(guest);
     }
 }

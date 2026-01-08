@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class RentalGuestController : Interactable
 {
@@ -19,6 +20,8 @@ public class RentalGuestController : Interactable
     private bool isMoving = false;
     private Vector3 currentTarget;
     private Collider2D interactionCollider;
+
+    public static event Action<GameObject> OnGuestLeft;
 
     void Awake()
     {
@@ -74,6 +77,8 @@ public class RentalGuestController : Interactable
     {
         if (isLeaving)
         {
+            OnGuestLeft?.Invoke(gameObject);
+
             Destroy(gameObject);
             return;
         }
