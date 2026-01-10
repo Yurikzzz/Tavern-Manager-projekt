@@ -38,6 +38,8 @@ public class RoomCameraController : MonoBehaviour
         {
             Vector3 targetPos = new Vector3(currentTarget.position.x, currentTarget.position.y, transform.position.z);
             transform.position = targetPos;
+
+            if (cam != null) cam.orthographicSize = targetZoom;
         }
     }
 }

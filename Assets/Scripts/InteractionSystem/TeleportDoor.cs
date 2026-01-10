@@ -1,70 +1,98 @@
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.UI;
 
 public class TeleportDoor : Interactable
 {
-    [Header("Player spawn")]
+    [Header("Destinations")]
     public Transform playerDestination;
-
-    [Header("Camera point")]
     public Transform cameraTarget;
 
-    [Header("Fading Settings")]
-    public Image blackScreen;
-    public float fadeSpeed = 2f;
+    [Header("Camera Settings")]
+    public float roomCameraSize = 5f;
 
-    private RoomCameraController camController;
-
-    void Start()
-    {
-        camController = Camera.main.GetComponent<RoomCameraController>();
-        if (promptUI != null) promptUI.SetActive(false);
-    }
+    [Header("UI")]
+    public Image blackScreenImage;
+    public float fadeDuration = 0.5f;
 
     public override void Interact()
     {
-        HidePrompt();
         StartCoroutine(TeleportRoutine());
     }
 
     private IEnumerator TeleportRoutine()
     {
-        float alpha = 0;
-        while (alpha < 1)
+        if (blackScreenImage != null)
         {
-            alpha += Time.deltaTime * fadeSpeed;
-            SetAlpha(alpha);
-            yield return null;
+            blackScreenImage.gameObject.SetActive(true);
+
+            blackScreenImage.transform.SetAsLastSibling();
+
+            Color c = blackScreenImage.color;
+            c.a = 0f;
+            blackScreenImage.color = c;
         }
 
-        GameObject.FindGameObjectWithTag("Player").transform.position = playerDestination.position;
-
-        if (camController != null && cameraTarget != null)
+        if (blackScreenImage != null)
         {
-            camController.currentTarget = cameraTarget;
+            float timer = 0f;
+            while (timer < fadeDuration)
+            {
+                timer += Time.deltaTime;
+                Color c = blackScreenImage.color;
+                c.a = Mathf.Lerp(0f, 1f, timer / fadeDuration);
+                blackScreenImage.color = c;
+                yield return null;
+            }
+            Color final = blackScreenImage.color;
+            final.a = 1f;
+            blackScreenImage.color = final;
+        }
+        else
+        {
+            yield return new WaitForSeconds(fadeDuration);
+        }
 
-            camController.SnapImmediately();
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            player.transform.position = playerDestination.position;
+        }
+
+        if (Camera.main != null)
+        {
+            RoomCameraController camController = Camera.main.GetComponent<RoomCameraController>();
+
+            if (camController != null)
+            {
+                camController.MoveToRoom(cameraTarget, roomCameraSize);
+                camController.SnapImmediately();
+            }
+            else
+            {
+                Camera.main.transform.position = new Vector3(cameraTarget.position.x, cameraTarget.position.y, -10f);
+                Camera.main.orthographicSize = roomCameraSize;
+            }
         }
 
         yield return new WaitForSeconds(0.2f);
 
-        while (alpha > 0)
+        if (blackScreenImage != null)
         {
-            alpha -= Time.deltaTime * fadeSpeed;
-            SetAlpha(alpha);
-            yield return null;
-        }
-        SetAlpha(0);
-    }
+            float timer = 0f;
+            while (timer < fadeDuration)
+            {
+                timer += Time.deltaTime;
+                Color c = blackScreenImage.color;
+                c.a = Mathf.Lerp(1f, 0f, timer / fadeDuration);
+                blackScreenImage.color = c;
+                yield return null;
+            }
+            Color final = blackScreenImage.color;
+            final.a = 0f;
+            blackScreenImage.color = final;
 
-    private void SetAlpha(float a)
-    {
-        if (blackScreen != null)
-        {
-            Color c = blackScreen.color;
-            c.a = a;
-            blackScreen.color = c;
+            blackScreenImage.gameObject.SetActive(false);
         }
     }
 }

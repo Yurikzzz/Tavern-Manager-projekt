@@ -3037,8 +3037,9 @@ MonoBehaviour:
   promptUI: {fileID: 1656919310}
   playerDestination: {fileID: 1826438186}
   cameraTarget: {fileID: 559011278}
-  blackScreen: {fileID: 852575752}
-  fadeSpeed: 2
+  roomCameraSize: 7
+  blackScreenImage: {fileID: 852575752}
+  fadeDuration: 0.5
 --- !u!212 &490374647
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3613,8 +3614,9 @@ MonoBehaviour:
   promptUI: {fileID: 398571840}
   playerDestination: {fileID: 1555790282}
   cameraTarget: {fileID: 1241315242}
-  blackScreen: {fileID: 852575752}
-  fadeSpeed: 2
+  roomCameraSize: 7
+  blackScreenImage: {fileID: 852575752}
+  fadeDuration: 0.5
 --- !u!212 &550247711
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4792,7 +4794,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!224 &683273730
 RectTransform:
@@ -6319,6 +6321,7 @@ GameObject:
   - component: {fileID: 852575751}
   - component: {fileID: 852575753}
   - component: {fileID: 852575752}
+  - component: {fileID: 852575754}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -6358,7 +6361,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6383,6 +6386,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 852575750}
   m_CullTransparentMesh: 1
+--- !u!225 &852575754
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 852575750}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &862308539
 GameObject:
   m_ObjectHideFlags: 0
@@ -6961,8 +6976,9 @@ MonoBehaviour:
   promptUI: {fileID: 142449940}
   playerDestination: {fileID: 505628202}
   cameraTarget: {fileID: 1241315242}
-  blackScreen: {fileID: 852575752}
-  fadeSpeed: 2
+  roomCameraSize: 7
+  blackScreenImage: {fileID: 852575752}
+  fadeDuration: 0.5
 --- !u!212 &915796631
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -8419,8 +8435,9 @@ MonoBehaviour:
   promptUI: {fileID: 520065109}
   playerDestination: {fileID: 1504160619}
   cameraTarget: {fileID: 1241315242}
-  blackScreen: {fileID: 852575752}
-  fadeSpeed: 2
+  roomCameraSize: 7
+  blackScreenImage: {fileID: 852575752}
+  fadeDuration: 0.5
 --- !u!212 &1137458550
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -9374,8 +9391,9 @@ MonoBehaviour:
   promptUI: {fileID: 641904907}
   playerDestination: {fileID: 1685756263}
   cameraTarget: {fileID: 1196081863}
-  blackScreen: {fileID: 852575752}
-  fadeSpeed: 2
+  roomCameraSize: 7
+  blackScreenImage: {fileID: 852575752}
+  fadeDuration: 0.5
 --- !u!212 &1356741164
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -9945,8 +9963,9 @@ MonoBehaviour:
   promptUI: {fileID: 138298197}
   playerDestination: {fileID: 1114958883}
   cameraTarget: {fileID: 901620984}
-  blackScreen: {fileID: 852575752}
-  fadeSpeed: 2
+  roomCameraSize: 7
+  blackScreenImage: {fileID: 852575752}
+  fadeDuration: 0.5
 --- !u!212 &1428370942
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -12679,8 +12698,9 @@ MonoBehaviour:
   promptUI: {fileID: 783411928}
   playerDestination: {fileID: 1820732521}
   cameraTarget: {fileID: 1620549545}
-  blackScreen: {fileID: 852575752}
-  fadeSpeed: 2
+  roomCameraSize: 5
+  blackScreenImage: {fileID: 852575752}
+  fadeDuration: 0.5
 --- !u!61 &1778959483
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -12938,8 +12958,9 @@ MonoBehaviour:
   promptUI: {fileID: 655635679}
   playerDestination: {fileID: 1895183574}
   cameraTarget: {fileID: 1241315242}
-  blackScreen: {fileID: 852575752}
-  fadeSpeed: 2
+  roomCameraSize: 7
+  blackScreenImage: {fileID: 852575752}
+  fadeDuration: 0.5
 --- !u!61 &1820732520
 BoxCollider2D:
   m_ObjectHideFlags: 0
