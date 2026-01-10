@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 public class Order
 {
@@ -20,14 +20,14 @@ public class OrderManager : MonoBehaviour
 {
     public static OrderManager Instance { get; private set; }
 
+    public event Action OnOrdersChanged;
+
     public List<Order> ActiveOrders { get; private set; } = new List<Order>();
 
     void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     void Start()
@@ -48,7 +48,6 @@ public class OrderManager : MonoBehaviour
 
     private void HandleDayChanged(int newDay)
     {
-        Debug.Log($"OrderManager: New day (day {newDay}), clearing all orders.");
         ClearAllOrders();
     }
 
@@ -57,6 +56,8 @@ public class OrderManager : MonoBehaviour
         Order order = new Order(customer, dish);
         ActiveOrders.Add(order);
 
+        OnOrdersChanged?.Invoke();
+
         Debug.Log($"OrderManager: {customer.gameObject.name} ordered {dish.displayName}");
         return order;
     }
@@ -64,12 +65,23 @@ public class OrderManager : MonoBehaviour
     public void MarkOrderServed(Order order)
     {
         order.isServed = true;
-
         ActiveOrders.Remove(order);
+
+        OnOrdersChanged?.Invoke();
+    }
+
+    public void CancelOrder(Order order)
+    {
+        if (ActiveOrders.Contains(order))
+        {
+            ActiveOrders.Remove(order);
+            OnOrdersChanged?.Invoke();
+        }
     }
 
     public void ClearAllOrders()
     {
         ActiveOrders.Clear();
+        OnOrdersChanged?.Invoke();
     }
 }

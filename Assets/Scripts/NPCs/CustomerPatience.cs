@@ -124,11 +124,37 @@ public class CustomerPatience : MonoBehaviour
 
     private void OnPatienceExpired()
     {
+        // 1. Hide the bar immediately
         if (barRoot != null)
             barRoot.gameObject.SetActive(false);
 
+        // 2. CANCEL THE ORDER IN THE MANAGER (The new part)
+        if (OrderManager.Instance != null && npcOrder != null)
+        {
+            // We need to find the specific "Order" object that belongs to THIS customer.
+            // We loop through the active orders to find the match.
+            Order myOrder = null;
+            foreach (var order in OrderManager.Instance.ActiveOrders)
+            {
+                if (order.customer == npcOrder)
+                {
+                    myOrder = order;
+                    break;
+                }
+            }
+
+            // If we found it, tell the manager to cancel it
+            if (myOrder != null)
+            {
+                Debug.Log($"Customer {name} ran out of patience! Cancelling order.");
+                OrderManager.Instance.CancelOrder(myOrder);
+            }
+        }
+
+        // 3. Record the failure
         DailyRewardManager.Instance?.RecordLeftWithoutServed();
 
+        // 4. Make the NPC leave
         if (npcController != null)
         {
             npcController.StartLeaving();

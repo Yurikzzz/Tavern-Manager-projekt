@@ -19,10 +19,14 @@ public class BarUIController : MonoBehaviour
     public PlayerCarry playerCarry;
 
     private bool isOpen = false;
+
     private Order selectedOrder;
+    private OrderButtonUI selectedOrderButton; 
+
+    private DishButtonUI selectedDishButton; 
+
     private readonly List<GameObject> spawnedOrderButtons = new List<GameObject>();
     private readonly List<DishButtonUI> dishButtons = new List<DishButtonUI>();
-    private DishButtonUI selectedDishButton;
 
     void Start()
     {
@@ -34,6 +38,30 @@ public class BarUIController : MonoBehaviour
             playerCarry = FindObjectOfType<PlayerCarry>();
             if (playerCarry == null)
                 Debug.LogWarning("BarUIController: No PlayerCarry found in scene.");
+        }
+    }
+
+    void OnEnable()
+    {
+        if (OrderManager.Instance != null)
+        {
+            OrderManager.Instance.OnOrdersChanged += HandleOrdersChanged;
+        }
+    }
+
+    void OnDisable()
+    {
+        if (OrderManager.Instance != null)
+        {
+            OrderManager.Instance.OnOrdersChanged -= HandleOrdersChanged;
+        }
+    }
+
+    private void HandleOrdersChanged()
+    {
+        if (isOpen)
+        {
+            RefreshOrdersList();
         }
     }
 
@@ -67,7 +95,6 @@ public class BarUIController : MonoBehaviour
         else Open();
     }
 
-
     public void RefreshOrdersList()
     {
         foreach (var go in spawnedOrderButtons)
@@ -75,7 +102,9 @@ public class BarUIController : MonoBehaviour
             if (go != null) Destroy(go);
         }
         spawnedOrderButtons.Clear();
+
         selectedOrder = null;
+        selectedOrderButton = null;
 
         if (ordersListParent == null)
         {
@@ -103,18 +132,29 @@ public class BarUIController : MonoBehaviour
                 buttonUI.Setup(order, this);
             }
         }
-
-        UpdateRequestedDishHighlight();
     }
 
-    public void SelectOrder(Order order)
+    public void SelectOrder(OrderButtonUI button)
     {
-        selectedOrder = order;
-        Debug.Log($"BarUI: Selected order for {order.customer.gameObject.name} - {order.dish.displayName}");
+        if (selectedOrderButton != null)
+        {
+            selectedOrderButton.SetSelected(false);
+        }
 
-        UpdateRequestedDishHighlight();
+        selectedOrderButton = button;
+
+        if (selectedOrderButton != null)
+        {
+            selectedOrderButton.SetSelected(true);
+            selectedOrder = selectedOrderButton.Order;
+
+            Debug.Log($"BarUI: Selected order for {selectedOrder.customer.gameObject.name}");
+        }
+        else
+        {
+            selectedOrder = null;
+        }
     }
-
 
     public void RefreshDishGrid()
     {
@@ -125,17 +165,8 @@ public class BarUIController : MonoBehaviour
         dishButtons.Clear();
         selectedDishButton = null;
 
-        if (dishesGridParent == null)
-        {
-            Debug.LogWarning("BarUIController: dishesGridParent not assigned.");
+        if (dishesGridParent == null || allDishes == null)
             return;
-        }
-
-        if (allDishes == null)
-        {
-            Debug.LogWarning("BarUIController: allDishes is empty.");
-            return;
-        }
 
         foreach (var dish in allDishes)
         {
@@ -150,8 +181,6 @@ public class BarUIController : MonoBehaviour
                 dishButtons.Add(btnUI);
             }
         }
-
-        UpdateRequestedDishHighlight();
     }
 
     public void SelectDish(DishButtonUI button)
@@ -169,18 +198,6 @@ public class BarUIController : MonoBehaviour
             Debug.Log($"BarUI: Selected dish {selectedDishButton.Dish.displayName}");
         }
     }
-
-    private void UpdateRequestedDishHighlight()
-    {
-        foreach (var btn in dishButtons)
-        {
-            if (btn == null) continue;
-
-            bool isRequested = (selectedOrder != null && btn.Dish == selectedOrder.dish);
-            btn.SetRequested(isRequested);
-        }
-    }
-
 
     public void ConfirmSelectedDish()
     {

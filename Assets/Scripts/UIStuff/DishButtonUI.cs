@@ -5,9 +5,9 @@ using TMPro;
 public class DishButtonUI : MonoBehaviour
 {
     public Image icon;
-    public TextMeshProUGUI label;    
-    public Image selectedBorder;
-    public Image requestedBorder;
+    public TextMeshProUGUI label;
+
+    public GameObject selectedBorderContainer;
 
     private Dish dish;
     private BarUIController barUI;
@@ -26,7 +26,6 @@ public class DishButtonUI : MonoBehaviour
             label.text = dish.displayName;
 
         SetSelected(false);
-        SetRequested(false);
 
         Button button = GetComponent<Button>();
         if (button != null)
@@ -46,13 +45,7 @@ public class DishButtonUI : MonoBehaviour
 
     public void SetSelected(bool value)
     {
-        if (selectedBorder != null)
-            selectedBorder.enabled = value;
-    }
-
-    public void SetRequested(bool value)
-    {
-        if (requestedBorder != null)
-            requestedBorder.enabled = value;
+        if (selectedBorderContainer != null)
+            selectedBorderContainer.SetActive(value);
     }
 }
