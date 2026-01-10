@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 349a1438ab1ec6a4fac6d3588aff048c
+guid: d3a9dc55e6858a94a859de90ac3aea8a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3394185333461948515
-    second: HighlightBorder_0
+      213: 6448087622931273593
+    second: Hallwya_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: HighlightBorder_0
+      name: Hallwya_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 64
+        width: 282
+        height: 107
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d97e8212c6e65e0d0800000000000000
-      internalID: -3394185333461948515
+      spriteID: 977596597853c7950800000000000000
+      internalID: 6448087622931273593
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      HighlightBorder_0: -3394185333461948515
+      Hallwya_0: 6448087622931273593
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
