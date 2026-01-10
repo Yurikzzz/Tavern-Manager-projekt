@@ -87,7 +87,6 @@ public class NPCOrder : MonoBehaviour
             Debug.Log($"{name}: Wrong dish, but thanks...");
         }
 
-        // Record result for daily rewards (full / quarter)
         DailyRewardManager.Instance?.RecordServed(correct);
 
         OrderManager.Instance.MarkOrderServed(CurrentOrder);

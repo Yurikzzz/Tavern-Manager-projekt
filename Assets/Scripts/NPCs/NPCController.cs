@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class NPCController : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class NPCController : MonoBehaviour
 
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+    private int originalSortingOrder;
 
     void Start()
     {
@@ -25,6 +27,7 @@ public class NPCController : MonoBehaviour
 
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null) originalSortingOrder = spriteRenderer.sortingOrder;
 
         FindSeat();
 
@@ -103,6 +106,11 @@ public class NPCController : MonoBehaviour
         animator.SetBool("isWalking", false);
         animator.SetBool("isSitting", true);
 
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sortingOrder = originalSortingOrder - 1;
+        }
+
         spriteRenderer.flipX = targetSeat.faceLeft;
 
         NPCOrder npcOrder = GetComponent<NPCOrder>();
@@ -124,6 +132,11 @@ public class NPCController : MonoBehaviour
 
         animator.SetBool("isSitting", false);
         animator.SetBool("isWalking", true);
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sortingOrder = originalSortingOrder;
+        }
 
         if (targetTable != null && targetSeat != null)
         {
