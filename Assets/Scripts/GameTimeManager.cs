@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class GameTimeManager : MonoBehaviour
 {
@@ -12,12 +13,29 @@ public class GameTimeManager : MonoBehaviour
     [Header("Renderer")]
     public SpriteRenderer backgroundRenderer;
 
+    [Header("Time Settings")]
+    [Tooltip("How long the tavern stays open (in seconds) before automatically closing.")]
+    public float afternoonDuration = 300f;
+
     public enum TimeOfDay { Morning, Afternoon, Night }
     public TimeOfDay CurrentTime { get; private set; } = TimeOfDay.Morning;
     public int CurrentDay { get; private set; } = 1;
 
+    public float AfternoonProgress
+    {
+        get
+        {
+            if (CurrentTime != TimeOfDay.Afternoon || afternoonDuration <= 0f)
+                return 0f;
+            return Mathf.Clamp01(afternoonTimerElapsed / afternoonDuration);
+        }
+    }
+
     public event Action<TimeOfDay> OnTimeChanged;
     public event Action<int> OnDayChanged;
+
+    private Coroutine afternoonTimerRoutine;
+    private float afternoonTimerElapsed = 0f;
 
     void Awake()
     {
@@ -34,7 +52,6 @@ public class GameTimeManager : MonoBehaviour
 
         if (backgroundRenderer == null)
             backgroundRenderer = GetComponent<SpriteRenderer>();
-
         if (backgroundRenderer == null)
             backgroundRenderer = GetComponentInChildren<SpriteRenderer>();
 
@@ -64,10 +81,36 @@ public class GameTimeManager : MonoBehaviour
 
     public void SetTime(TimeOfDay newTime)
     {
+        if (afternoonTimerRoutine != null)
+        {
+            StopCoroutine(afternoonTimerRoutine);
+            afternoonTimerRoutine = null;
+        }
+
         CurrentTime = newTime;
+
+        afternoonTimerElapsed = 0f;
+
+        if (CurrentTime == TimeOfDay.Afternoon)
+        {
+            afternoonTimerRoutine = StartCoroutine(AfternoonTimer());
+        }
+
         ApplyBackgroundForTime(CurrentTime);
         OnTimeChanged?.Invoke(CurrentTime);
         Debug.Log($"Time set to: {CurrentTime}");
+    }
+
+    private IEnumerator AfternoonTimer()
+    {
+        while (afternoonTimerElapsed < afternoonDuration)
+        {
+            afternoonTimerElapsed += Time.deltaTime;
+            yield return null; 
+        }
+
+        Debug.Log("GameTimeManager: Afternoon time limit reached. Closing tavern.");
+        SetTime(TimeOfDay.Night);
     }
 
     void ApplyBackgroundForTime(TimeOfDay time)
@@ -93,9 +136,7 @@ public class GameTimeManager : MonoBehaviour
         if (CurrentTime == TimeOfDay.Night)
         {
             CurrentDay++;
-
             SetTime(TimeOfDay.Morning);
-
             OnDayChanged?.Invoke(CurrentDay);
             Debug.Log($"New day started: Day {CurrentDay}");
         }
