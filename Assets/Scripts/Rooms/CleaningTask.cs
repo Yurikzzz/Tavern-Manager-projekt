@@ -6,7 +6,7 @@ public class CleaningTask : Interactable
 
     [Header("Task Settings")]
     public TaskType type;
-    public RoomManager myRoom; // Drag the room parent here
+    public RoomManager myRoom; 
 
     [Header("Visuals (For Beds Only)")]
     public Sprite cleanSprite;

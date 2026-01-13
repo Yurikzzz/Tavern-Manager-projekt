@@ -21,9 +21,9 @@ public class BarUIController : MonoBehaviour
     private bool isOpen = false;
 
     private Order selectedOrder;
-    private OrderButtonUI selectedOrderButton; 
+    private OrderButtonUI selectedOrderButton;
 
-    private DishButtonUI selectedDishButton; 
+    private DishButtonUI selectedDishButton;
 
     private readonly List<GameObject> spawnedOrderButtons = new List<GameObject>();
     private readonly List<DishButtonUI> dishButtons = new List<DishButtonUI>();
@@ -97,13 +97,14 @@ public class BarUIController : MonoBehaviour
 
     public void RefreshOrdersList()
     {
+        Order previousSelection = selectedOrder;
+
         foreach (var go in spawnedOrderButtons)
         {
             if (go != null) Destroy(go);
         }
         spawnedOrderButtons.Clear();
 
-        selectedOrder = null;
         selectedOrderButton = null;
 
         if (ordersListParent == null)
@@ -118,6 +119,8 @@ public class BarUIController : MonoBehaviour
             return;
         }
 
+        bool foundPrevious = false;
+
         foreach (var order in OrderManager.Instance.ActiveOrders)
         {
             if (order.isServed)
@@ -130,7 +133,18 @@ public class BarUIController : MonoBehaviour
             if (buttonUI != null)
             {
                 buttonUI.Setup(order, this);
+
+                if (previousSelection != null && order == previousSelection)
+                {
+                    SelectOrder(buttonUI);
+                    foundPrevious = true;
+                }
             }
+        }
+
+        if (!foundPrevious)
+        {
+            selectedOrder = null;
         }
     }
 

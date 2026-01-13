@@ -10,7 +10,16 @@ public class NPCSpawner : MonoBehaviour
     public GameObject npcPrefab;
     public Transform spawnPoint;
     public int maxNpcs = 5;
+
+    [Header("Spawn Settings")]
+    [Tooltip("Base time (in seconds) between spawns when Popularity is 0.")]
     public float spawnInterval = 3f;
+
+    [Tooltip("The fastest possible spawn rate (minimum seconds between spawns).")]
+    public float minSpawnInterval = 0.5f;
+
+    [Tooltip("How many seconds to reduce from the spawn interval per 1 point of Popularity.")]
+    public float popularityReductionFactor = 0.05f;
 
     [Header("Spawn timing")]
     [Tooltip("Delay before the first NPC spawns when spawning starts (seconds)")]
@@ -80,7 +89,15 @@ public class NPCSpawner : MonoBehaviour
                 SpawnOneNpc();
             }
 
-            yield return new WaitForSeconds(spawnInterval);
+            float currentInterval = spawnInterval;
+
+            if (PlayerProgress.Instance != null)
+            {
+                int popularity = PlayerProgress.Instance.Popularity;
+                currentInterval = Mathf.Max(minSpawnInterval, spawnInterval - (popularity * popularityReductionFactor));
+            }
+
+            yield return new WaitForSeconds(currentInterval);
         }
     }
 
@@ -106,7 +123,6 @@ public class NPCSpawner : MonoBehaviour
 
     void ClearAllNpcs()
     {
-        
         for (int i = 0; i < spawnedNpcs.Count; i++)
         {
             var npc = spawnedNpcs[i];

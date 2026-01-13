@@ -13623,7 +13623,9 @@ MonoBehaviour:
   npcPrefab: {fileID: 7558932106577968589, guid: 6978942db2bcd004e8c4eadb14e6aaf9, type: 3}
   spawnPoint: {fileID: 1670150095}
   maxNpcs: 6
-  spawnInterval: 10
+  spawnInterval: 15
+  minSpawnInterval: 3
+  popularityReductionFactor: 0.05
   initialSpawnDelay: 5
 --- !u!4 &1984657042
 Transform:
