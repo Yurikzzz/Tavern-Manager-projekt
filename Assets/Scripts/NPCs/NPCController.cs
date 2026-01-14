@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class NPCController : MonoBehaviour
 {
@@ -19,6 +18,7 @@ public class NPCController : MonoBehaviour
 
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+    private Collider2D npcCollider;
     private int originalSortingOrder;
 
     void Start()
@@ -27,7 +27,12 @@ public class NPCController : MonoBehaviour
 
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        npcCollider = GetComponent<Collider2D>();
+
         if (spriteRenderer != null) originalSortingOrder = spriteRenderer.sortingOrder;
+
+        if (npcCollider != null)
+            npcCollider.enabled = false;
 
         FindSeat();
 
@@ -113,6 +118,9 @@ public class NPCController : MonoBehaviour
 
         spriteRenderer.flipX = targetSeat.faceLeft;
 
+        if (npcCollider != null)
+            npcCollider.enabled = true;
+
         NPCOrder npcOrder = GetComponent<NPCOrder>();
         if (npcOrder != null)
             npcOrder.StartOrder();
@@ -129,6 +137,9 @@ public class NPCController : MonoBehaviour
 
         isLeaving = true;
         isSitting = false;
+
+        if (npcCollider != null)
+            npcCollider.enabled = false;
 
         animator.SetBool("isSitting", false);
         animator.SetBool("isWalking", true);

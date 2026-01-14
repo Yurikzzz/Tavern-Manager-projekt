@@ -12,6 +12,14 @@ public class NPCOrder : MonoBehaviour
     [Header("UI / Markers")]
     public GameObject deliveryMarker;
 
+    [Header("Feedback Icons")]
+    [Tooltip("The visual object to show when the order is correct (e.g. Green Checkmark)")]
+    public GameObject correctFeedbackIcon;
+    [Tooltip("The visual object to show when the order is wrong (e.g. Red X)")]
+    public GameObject wrongFeedbackIcon;
+    [Tooltip("How long the feedback icon stays visible")]
+    public float feedbackDuration = 2.0f;
+
     public Order CurrentOrder { get; private set; }
     public bool HasOrder => CurrentOrder != null && !CurrentOrder.isServed;
 
@@ -27,6 +35,9 @@ public class NPCOrder : MonoBehaviour
     {
         if (deliveryMarker != null)
             deliveryMarker.SetActive(false);
+
+        if (correctFeedbackIcon != null) correctFeedbackIcon.SetActive(false);
+        if (wrongFeedbackIcon != null) wrongFeedbackIcon.SetActive(false);
     }
 
     public void StartOrder()
@@ -81,15 +92,20 @@ public class NPCOrder : MonoBehaviour
         if (correct)
         {
             Debug.Log($"{name}: Mmm, that's exactly my {dishFromPlayer.displayName}!");
+            ShowFeedback(correctFeedbackIcon);
         }
         else
         {
             Debug.Log($"{name}: Wrong dish, but thanks...");
+            ShowFeedback(wrongFeedbackIcon);
         }
 
         DailyRewardManager.Instance?.RecordServed(correct);
 
         OrderManager.Instance.MarkOrderServed(CurrentOrder);
+
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
 
         if (patience != null)
             patience.OnServed();
@@ -100,6 +116,21 @@ public class NPCOrder : MonoBehaviour
             eatingRoutine = StartCoroutine(EatAndLeave());
 
         return true;
+    }
+
+    private void ShowFeedback(GameObject icon)
+    {
+        if (icon != null)
+        {
+            StartCoroutine(FeedbackRoutine(icon));
+        }
+    }
+
+    private IEnumerator FeedbackRoutine(GameObject icon)
+    {
+        icon.SetActive(true);
+        yield return new WaitForSeconds(feedbackDuration);
+        icon.SetActive(false);
     }
 
     private IEnumerator EatAndLeave()
