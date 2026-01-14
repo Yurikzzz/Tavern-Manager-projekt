@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1e057d57a107dcf43bc0dfdb575d590c
+guid: f92e916afc7188a49ab98aaef8ee33b9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2230302187663311444
-    second: "Sn\xEDmek obrazovky 2026-01-14 113101_0"
+      213: 8482712648628362555
+    second: Cross_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "Sn\xEDmek obrazovky 2026-01-14 113101_0"
+      name: Cross_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 169
-        height: 166
+        width: 13
+        height: 13
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cad3d8a1aff5c01e0800000000000000
-      internalID: -2230302187663311444
+      spriteID: b3dd439e536a8b570800000000000000
+      internalID: 8482712648628362555
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "Sn\xEDmek obrazovky 2026-01-14 113101_0": -2230302187663311444
+      Cross_0: 8482712648628362555
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
