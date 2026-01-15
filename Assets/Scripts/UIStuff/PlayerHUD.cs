@@ -43,7 +43,6 @@ public class PlayerHUD : MonoBehaviour
         {
             PlayerProgress.Instance.OnCoinsChanged += UpdateCoins;
             PlayerProgress.Instance.OnPopularityChanged += UpdatePopularity;
-            // Initialize
             UpdateCoins(PlayerProgress.Instance.Coins);
             UpdatePopularity(PlayerProgress.Instance.Popularity);
         }
@@ -113,12 +112,12 @@ public class PlayerHUD : MonoBehaviour
     void UpdateCoins(int amount)
     {
         if (coinsText != null)
-            coinsText.text = "Coins: " + amount.ToString();
+            coinsText.text = amount.ToString();
     }
 
     void UpdatePopularity(int amount)
     {
         if (popularityText != null)
-            popularityText.text = "Popularity: " + amount.ToString();
+            popularityText.text = amount.ToString();
     }
 }
