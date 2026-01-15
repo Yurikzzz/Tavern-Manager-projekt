@@ -21,7 +21,11 @@ public class RentalGuestSpawner : MonoBehaviour
     void Start()
     {
         if (GameTimeManager.Instance != null)
+        {
             GameTimeManager.Instance.OnTimeChanged += OnTimeChanged;
+
+            OnTimeChanged(GameTimeManager.Instance.CurrentTime);
+        }
     }
 
     void OnDestroy()
@@ -32,7 +36,7 @@ public class RentalGuestSpawner : MonoBehaviour
 
     void OnTimeChanged(GameTimeManager.TimeOfDay time)
     {
-        if (time == GameTimeManager.TimeOfDay.Afternoon || time == GameTimeManager.TimeOfDay.Night)
+        if (time == GameTimeManager.TimeOfDay.Afternoon)
         {
             StartSpawning();
         }
@@ -81,6 +85,7 @@ public class RentalGuestSpawner : MonoBehaviour
         if (rentalGuestPrefab == null) return;
 
         GameObject guest = Instantiate(rentalGuestPrefab, spawnPoint.position, Quaternion.identity);
+        currentGuest = guest;
 
         RentalGuestController controller = guest.GetComponent<RentalGuestController>();
         if (controller != null)

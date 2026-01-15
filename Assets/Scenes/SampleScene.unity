@@ -1027,8 +1027,8 @@ MonoBehaviour:
   rentalGuestPrefab: {fileID: 6732505157858711373, guid: cf90c0cbc0e442a419811ff52efb26ad, type: 3}
   spawnPoint: {fileID: 1670150095}
   barCheckInPoint: {fileID: 827754196}
-  minSpawnTime: 20
-  maxSpawnTime: 50
+  minSpawnTime: 15
+  maxSpawnTime: 35
 --- !u!1 &231987551
 GameObject:
   m_ObjectHideFlags: 0

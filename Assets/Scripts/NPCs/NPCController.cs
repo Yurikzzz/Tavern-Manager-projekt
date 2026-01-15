@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic; // Added for List<>
 using UnityEngine;
 
 public class NPCController : MonoBehaviour
@@ -79,18 +80,26 @@ public class NPCController : MonoBehaviour
     void FindSeat()
     {
         Table[] tables = FindObjectsOfType<Table>();
+        List<Table> availableTables = new List<Table>();
 
+        // 1. Gather all tables that have at least one free seat
         foreach (Table table in tables)
         {
-            if (!table.HasFreeSeat)
-                continue;
-
-            Table.Seat seat = table.GetFreeSeat();
-            if (seat != null)
+            if (table.HasFreeSeat)
             {
-                targetSeat = seat;
-                targetTable = table;
-                targetTable.OccupySeat(seat);
+                availableTables.Add(table);
+            }
+        }
+
+        // 2. If we found any, pick one at random
+        if (availableTables.Count > 0)
+        {
+            targetTable = availableTables[UnityEngine.Random.Range(0, availableTables.Count)];
+            targetSeat = targetTable.GetFreeSeat();
+
+            if (targetSeat != null)
+            {
+                targetTable.OccupySeat(targetSeat);
                 return;
             }
         }

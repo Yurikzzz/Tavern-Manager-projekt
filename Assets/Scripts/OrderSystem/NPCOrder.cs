@@ -14,11 +14,8 @@ public class NPCOrder : MonoBehaviour
     public RewardFeedbackUI rewardPopup;
 
     [Header("Feedback Icons")]
-    [Tooltip("The visual object to show when the order is correct (e.g. Green Checkmark)")]
     public GameObject correctFeedbackIcon;
-    [Tooltip("The visual object to show when the order is wrong (e.g. Red X)")]
     public GameObject wrongFeedbackIcon;
-    [Tooltip("How long the feedback icon stays visible")]
     public float feedbackDuration = 2.0f;
 
     public Order CurrentOrder { get; private set; }
@@ -39,26 +36,46 @@ public class NPCOrder : MonoBehaviour
 
         if (correctFeedbackIcon != null) correctFeedbackIcon.SetActive(false);
         if (wrongFeedbackIcon != null) wrongFeedbackIcon.SetActive(false);
+
+        if (GameTimeManager.Instance != null)
+        {
+            GameTimeManager.Instance.OnTimeChanged += OnTimeChanged;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (GameTimeManager.Instance != null)
+        {
+            GameTimeManager.Instance.OnTimeChanged -= OnTimeChanged;
+        }
+
+        if (CurrentOrder != null && OrderManager.Instance != null)
+        {
+            OrderManager.Instance.ActiveOrders.Remove(CurrentOrder);
+        }
+    }
+
+    private void OnTimeChanged(GameTimeManager.TimeOfDay time)
+    {
+        if (time == GameTimeManager.TimeOfDay.Night)
+        {
+            HideDeliveryMarker();
+        }
     }
 
     public void StartOrder()
     {
-        if (HasOrder)
+        if (HasOrder) return;
+
+        if (GameTimeManager.Instance != null && GameTimeManager.Instance.CurrentTime == GameTimeManager.TimeOfDay.Night)
             return;
 
-        if (possibleDishes == null || possibleDishes.Length == 0)
-        {
-            Debug.LogWarning($"NPCOrder: {name} has no possible dishes assigned.");
-            return;
-        }
+        if (possibleDishes == null || possibleDishes.Length == 0) return;
 
         Dish chosen = possibleDishes[Random.Range(0, possibleDishes.Length)];
 
-        if (OrderManager.Instance == null)
-        {
-            Debug.LogWarning("NPCOrder: No OrderManager in scene.");
-            return;
-        }
+        if (OrderManager.Instance == null) return;
 
         CurrentOrder = OrderManager.Instance.CreateOrder(this, chosen);
         Debug.Log($"{name} started an order for {chosen.displayName}");
@@ -66,6 +83,9 @@ public class NPCOrder : MonoBehaviour
 
     public void ShowDeliveryMarker()
     {
+        if (GameTimeManager.Instance != null && GameTimeManager.Instance.CurrentTime == GameTimeManager.TimeOfDay.Night)
+            return;
+
         if (deliveryMarker != null)
             deliveryMarker.SetActive(true);
     }
@@ -79,8 +99,7 @@ public class NPCOrder : MonoBehaviour
     public bool TryServe(Dish dishFromPlayer)
     {
         var patience = GetComponent<CustomerPatience>();
-        if (dishFromPlayer == null)
-            return false;
+        if (dishFromPlayer == null) return false;
 
         if (CurrentOrder == null)
         {
@@ -156,26 +175,12 @@ public class NPCOrder : MonoBehaviour
     private IEnumerator EatAndLeave()
     {
         Debug.Log($"{name} starts eating...");
-
         yield return new WaitForSeconds(eatingDuration);
-
         Debug.Log($"{name} finished eating and is going to the door.");
 
         if (npcController != null)
-        {
             npcController.StartLeaving();
-        }
         else
-        {
             Destroy(gameObject);
-        }
-    }
-
-    void OnDestroy()
-    {
-        if (CurrentOrder != null && OrderManager.Instance != null)
-        {
-            OrderManager.Instance.ActiveOrders.Remove(CurrentOrder);
-        }
     }
 }

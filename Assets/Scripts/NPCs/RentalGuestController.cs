@@ -39,6 +39,28 @@ public class RentalGuestController : Interactable
         {
             MoveTo(barPosition.position);
         }
+
+        if (GameTimeManager.Instance != null)
+        {
+            GameTimeManager.Instance.OnTimeChanged += OnTimeChanged;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (GameTimeManager.Instance != null)
+        {
+            GameTimeManager.Instance.OnTimeChanged -= OnTimeChanged;
+        }
+    }
+
+    private void OnTimeChanged(GameTimeManager.TimeOfDay time)
+    {
+        if (time == GameTimeManager.TimeOfDay.Night && !hasRoom && !isLeaving)
+        {
+            Debug.Log("Guest: Closing time already? I'm heading out.");
+            LeaveTavern();
+        }
     }
 
     void Update()
