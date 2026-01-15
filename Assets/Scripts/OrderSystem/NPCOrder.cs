@@ -11,6 +11,7 @@ public class NPCOrder : MonoBehaviour
 
     [Header("UI / Markers")]
     public GameObject deliveryMarker;
+    public RewardFeedbackUI rewardPopup;
 
     [Header("Feedback Icons")]
     [Tooltip("The visual object to show when the order is correct (e.g. Green Checkmark)")]
@@ -88,19 +89,38 @@ public class NPCOrder : MonoBehaviour
         }
 
         bool correct = (dishFromPlayer == CurrentOrder.dish);
+        int rewardCoins = 0;
+        int rewardPop = 0;
 
         if (correct)
         {
             Debug.Log($"{name}: Mmm, that's exactly my {dishFromPlayer.displayName}!");
             ShowFeedback(correctFeedbackIcon);
+
+            rewardCoins = CurrentOrder.dish.coinReward;
+            rewardPop = CurrentOrder.dish.popularityReward;
         }
         else
         {
             Debug.Log($"{name}: Wrong dish, but thanks...");
             ShowFeedback(wrongFeedbackIcon);
+
+            rewardCoins = CurrentOrder.dish.coinReward / 2;
+            rewardPop = CurrentOrder.dish.popularityReward / 2;
         }
 
-        DailyRewardManager.Instance?.RecordServed(correct);
+        if (PlayerProgress.Instance != null)
+        {
+            PlayerProgress.Instance.AddCoins(rewardCoins);
+            PlayerProgress.Instance.AddPopularity(rewardPop);
+        }
+
+        if (rewardPopup != null)
+        {
+            rewardPopup.ShowReward(rewardCoins, rewardPop);
+        }
+
+        DailyRewardManager.Instance?.RecordServed(rewardCoins, rewardPop);
 
         OrderManager.Instance.MarkOrderServed(CurrentOrder);
 

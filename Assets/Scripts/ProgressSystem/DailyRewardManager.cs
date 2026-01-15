@@ -4,10 +4,6 @@ public class DailyRewardManager : MonoBehaviour
 {
     public static DailyRewardManager Instance { get; private set; }
 
-    [Header("Base rewards per customer")]
-    public int coinsPerCustomer = 10;
-    public int popularityPerCustomer = 5;
-
     [Header("UI")]
     public GameObject daySummaryPrefab;
 
@@ -47,26 +43,13 @@ public class DailyRewardManager : MonoBehaviour
         }
     }
 
-    public void RecordServed(bool correct)
+    public void RecordServed(int coinsEarned, int popularityEarned)
     {
         customersServed++;
-        float mul = correct ? 1f : 0.5f;
-        int gainedCoins = Mathf.RoundToInt(coinsPerCustomer * mul);
-        int gainedPopularity = Mathf.RoundToInt(popularityPerCustomer * mul);
 
-        coinsGained += gainedCoins;
-        popularityGained += gainedPopularity;
+        coinsGained += coinsEarned;
+        popularityGained += popularityEarned;
 
-        if (PlayerProgress.Instance != null)
-        {
-            PlayerProgress.Instance.AddCoins(gainedCoins);
-            PlayerProgress.Instance.AddPopularity(gainedPopularity);
-            Debug.Log($"DailyRewardManager: Applied instant rewards: +{gainedCoins} coins, +{gainedPopularity} popularity.");
-        }
-        else
-        {
-            Debug.LogWarning("DailyRewardManager: No PlayerProgress found; instant rewards not applied.");
-        }
     }
 
     public void RecordLeftWithoutServed()
@@ -102,7 +85,7 @@ public class DailyRewardManager : MonoBehaviour
     {
         if (daySummaryPrefab == null)
         {
-            Debug.LogWarning("DailyRewardManager: daySummaryPrefab not assigned. Rewards are applied instantly; just resetting daily counters.");
+            Debug.LogWarning("DailyRewardManager: daySummaryPrefab not assigned. Resetting counters.");
             ResetDaily();
             return;
         }
@@ -128,20 +111,6 @@ public class DailyRewardManager : MonoBehaviour
             Debug.LogWarning("DailyRewardManager: daySummaryPrefab does not contain DaySummaryUI component.");
             Destroy(go);
             ResetDaily();
-        }
-    }
-
-    public void ApplyRewards()
-    {
-        if (PlayerProgress.Instance != null)
-        {
-            PlayerProgress.Instance.AddCoins(coinsGained);
-            PlayerProgress.Instance.AddPopularity(popularityGained);
-            Debug.Log($"DailyRewardManager: Applied rewards: +{coinsGained} coins, +{popularityGained} popularity.");
-        }
-        else
-        {
-            Debug.LogWarning("DailyRewardManager: No PlayerProgress found; rewards not applied.");
         }
     }
 
