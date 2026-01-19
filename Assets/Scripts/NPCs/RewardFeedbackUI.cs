@@ -7,8 +7,13 @@ public class RewardFeedbackUI : MonoBehaviour
     [Header("Data References")]
     [Tooltip("The TextMeshPro component for the Coin amount")]
     public TMP_Text coinText;
+    [Tooltip("Coin sprite.")]
+    public GameObject coinIconObject;
+
     [Tooltip("The TextMeshPro component for the Popularity amount")]
     public TMP_Text popularityText;
+    [Tooltip("Popularity sprite.")]
+    public GameObject popularityIconObject;
 
     [Header("Animation Settings")]
     public float displayDuration = 2.0f;
@@ -31,8 +36,31 @@ public class RewardFeedbackUI : MonoBehaviour
 
     public void ShowReward(int coins, int popularity)
     {
-        if (coinText != null) coinText.text = "+" + coins;
-        if (popularityText != null) popularityText.text = "+" + popularity;
+        bool showCoins = (coins != 0);
+
+        if (coinText != null)
+        {
+            coinText.gameObject.SetActive(showCoins);
+            coinText.text = (coins > 0 ? "+" : "") + coins;
+        }
+
+        if (coinIconObject != null)
+        {
+            coinIconObject.SetActive(showCoins);
+        }
+
+        bool showPopularity = (popularity != 0);
+
+        if (popularityText != null)
+        {
+            popularityText.gameObject.SetActive(showPopularity);
+            popularityText.text = (popularity > 0 ? "+" : "") + popularity;
+        }
+
+        if (popularityIconObject != null)
+        {
+            popularityIconObject.SetActive(showPopularity);
+        }
 
         gameObject.SetActive(true);
 

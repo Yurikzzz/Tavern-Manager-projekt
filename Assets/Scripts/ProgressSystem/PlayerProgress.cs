@@ -33,15 +33,19 @@ public class PlayerProgress : MonoBehaviour
 
     public void AddCoins(int amount)
     {
-        Coins += Mathf.Max(0, amount);
-        Debug.Log($"PlayerProgress: +{amount} coins (total {Coins})");
+        Coins += amount;
+        if (Coins < 0) Coins = 0;
+
+        Debug.Log($"PlayerProgress: {(amount >= 0 ? "+" : "")}{amount} coins (total {Coins})");
         OnCoinsChanged?.Invoke(Coins);
     }
 
     public void AddPopularity(int amount)
     {
-        Popularity += Mathf.Max(0, amount);
-        Debug.Log($"PlayerProgress: +{amount} popularity (total {Popularity})");
+        Popularity += amount;
+        if (Popularity < 0) Popularity = 0;
+
+        Debug.Log($"PlayerProgress: {(amount >= 0 ? "+" : "")}{amount} popularity (total {Popularity})");
         OnPopularityChanged?.Invoke(Popularity);
     }
 }

@@ -46,15 +46,14 @@ public class DailyRewardManager : MonoBehaviour
     public void RecordServed(int coinsEarned, int popularityEarned)
     {
         customersServed++;
-
         coinsGained += coinsEarned;
         popularityGained += popularityEarned;
-
     }
 
-    public void RecordLeftWithoutServed()
+    public void RecordLeftWithoutServed(int penalty = 0)
     {
         customersLeft++;
+        popularityGained -= penalty;
     }
 
     private void OnDayChanged(int newDay)

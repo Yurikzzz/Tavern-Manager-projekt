@@ -1307,10 +1307,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5620ec50681f63f42ae6754847017a1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxPatience: 30
+  maxPatience: 15
   currentPatience: 0
   drainMultiplier: 1
   waiting: 0
+  popularityPenalty: 5
+  rewardUI: {fileID: 3923847534123201339}
   barRoot: {fileID: 7086526061758476395}
   barFill: {fileID: 8949248499857033085}
 --- !u!95 &2614910853174761416
@@ -1384,7 +1386,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinText: {fileID: 5456985389435511729}
+  coinIconObject: {fileID: 524133167474585682}
   popularityText: {fileID: 6828608431809549919}
+  popularityIconObject: {fileID: 1180272915218276329}
   displayDuration: 2
   floatSpeed: 0.5
   moveDirection: {x: 0, y: 1, z: 0}

@@ -9,6 +9,10 @@ public class CustomerPatience : MonoBehaviour
     public bool waiting = false;
     private bool served = false;
 
+    [Header("Penalty Settings")]
+    public int popularityPenalty = 5;
+    public RewardFeedbackUI rewardUI;
+
     [Header("Bar Elements")]
     public Transform barRoot;
     public Transform barFill;
@@ -26,15 +30,14 @@ public class CustomerPatience : MonoBehaviour
 
         npcController = GetComponent<NPCController>();
         if (npcController == null)
-        {
             npcController = GetComponentInParent<NPCController>();
-        }
 
         npcOrder = GetComponent<NPCOrder>();
         if (npcOrder == null)
-        {
             npcOrder = GetComponentInParent<NPCOrder>();
-        }
+
+        if (rewardUI == null)
+            rewardUI = GetComponentInChildren<RewardFeedbackUI>(true);
     }
 
     private void Start()
@@ -61,7 +64,7 @@ public class CustomerPatience : MonoBehaviour
         {
             if (npcOrder != null && npcOrder.HasOrder)
             {
-                waiting = false; 
+                waiting = false;
                 if (barRoot != null)
                     barRoot.gameObject.SetActive(false);
             }
@@ -101,7 +104,6 @@ public class CustomerPatience : MonoBehaviour
         if (barFill == null) return;
 
         float t = currentPatience / maxPatience;
-
         Vector3 s = barFillBaseScale;
         s.x *= t;
         barFill.localScale = s;
@@ -129,7 +131,6 @@ public class CustomerPatience : MonoBehaviour
 
         if (OrderManager.Instance != null && npcOrder != null)
         {
-
             Order myOrder = null;
             foreach (var order in OrderManager.Instance.ActiveOrders)
             {
@@ -147,6 +148,18 @@ public class CustomerPatience : MonoBehaviour
             }
         }
 
+        if (PlayerProgress.Instance != null)
+        {
+            PlayerProgress.Instance.AddPopularity(-popularityPenalty);
+        }
+
+        if (rewardUI != null)
+        {
+            rewardUI.ShowReward(0, -popularityPenalty);
+        }
+
+        DailyRewardManager.Instance?.RecordLeftWithoutServed(popularityPenalty);
+
         DailyRewardManager.Instance?.RecordLeftWithoutServed();
 
         if (npcController != null)
@@ -155,7 +168,6 @@ public class CustomerPatience : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"{name}: NPCController not found — destroying because patience expired.");
             Destroy(gameObject, 0.1f);
         }
     }
