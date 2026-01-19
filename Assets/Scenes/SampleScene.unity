@@ -1027,8 +1027,8 @@ MonoBehaviour:
   rentalGuestPrefab: {fileID: 6732505157858711373, guid: cf90c0cbc0e442a419811ff52efb26ad, type: 3}
   spawnPoint: {fileID: 1670150095}
   barCheckInPoint: {fileID: 827754196}
-  minSpawnTime: 15
-  maxSpawnTime: 35
+  minSpawnTime: 10
+  maxSpawnTime: 10
 --- !u!1 &231987551
 GameObject:
   m_ObjectHideFlags: 0
@@ -1671,7 +1671,7 @@ Transform:
   m_GameObject: {fileID: 282197082}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -8.68, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
