@@ -15,6 +15,21 @@ public class TeleportDoor : Interactable
     public Image blackScreenImage;
     public float fadeDuration = 0.5f;
 
+    private Collider2D doorCollider;
+
+    private void Awake()
+    {
+        doorCollider = GetComponent<Collider2D>();
+    }
+
+    public void SetLocked(bool isLocked)
+    {
+        if (doorCollider != null)
+        {
+            doorCollider.enabled = !isLocked;
+        }
+    }
+
     public override void Interact()
     {
         StartCoroutine(TeleportRoutine());

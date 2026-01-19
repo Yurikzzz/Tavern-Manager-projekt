@@ -10226,6 +10226,7 @@ MonoBehaviour:
   isOccupied: 0
   tasksRemaining: 0
   guestEntrance: {fileID: 1820732521}
+  roomDoor: {fileID: 1428370941}
   allTasks: []
 --- !u!4 &1434688442
 Transform:
@@ -10976,6 +10977,7 @@ MonoBehaviour:
   isOccupied: 0
   tasksRemaining: 0
   guestEntrance: {fileID: 1820732521}
+  roomDoor: {fileID: 490374646}
   allTasks: []
 --- !u!1 &1510779311
 GameObject:
@@ -13787,6 +13789,7 @@ MonoBehaviour:
   isOccupied: 0
   tasksRemaining: 0
   guestEntrance: {fileID: 1820732521}
+  roomDoor: {fileID: 1356741163}
   allTasks: []
 --- !u!1 &1971570545
 GameObject:

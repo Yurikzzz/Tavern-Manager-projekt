@@ -4,12 +4,13 @@ using System.Collections.Generic;
 public class RoomManager : MonoBehaviour
 {
     [Header("Room Status")]
-    public bool isClean = true; 
+    public bool isClean = true;
     public bool isOccupied = false;
     public int tasksRemaining = 0;
 
     [Header("Configuration")]
     public Transform guestEntrance;
+    public TeleportDoor roomDoor; 
     public List<CleaningTask> allTasks = new List<CleaningTask>();
 
     private bool wasCleanWhenRented = false;
@@ -25,6 +26,11 @@ public class RoomManager : MonoBehaviour
         if (RentalManager.Instance != null)
         {
             RentalManager.Instance.RegisterRoom(this);
+        }
+
+        if (roomDoor != null && !isOccupied)
+        {
+            roomDoor.SetLocked(false);
         }
 
         GenerateMorningMess();
@@ -45,6 +51,10 @@ public class RoomManager : MonoBehaviour
         isOccupied = true;
         wasCleanWhenRented = isClean;
 
+        if (roomDoor != null)
+        {
+            roomDoor.SetLocked(true);
+        }
     }
 
     public void CalculateNightlyRewards(out int coins, out int popularity)
@@ -58,6 +68,11 @@ public class RoomManager : MonoBehaviour
         if (isOccupied)
         {
             isOccupied = false;
+
+            if (roomDoor != null)
+            {
+                roomDoor.SetLocked(false);
+            }
 
             GenerateMorningMess();
         }
