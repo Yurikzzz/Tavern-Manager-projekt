@@ -6,10 +6,11 @@ public class TeleportDoor : Interactable
 {
     [Header("Destinations")]
     public Transform playerDestination;
-    public Transform cameraTarget;
+    public Transform cameraTarget; 
 
     [Header("Camera Settings")]
-    public float roomCameraSize = 5f;
+    public RoomCameraController.ResolutionType targetResolution;
+    public Collider2D roomBounds; 
 
     [Header("UI")]
     public Image blackScreenImage;
@@ -24,10 +25,7 @@ public class TeleportDoor : Interactable
 
     public void SetLocked(bool isLocked)
     {
-        if (doorCollider != null)
-        {
-            doorCollider.enabled = !isLocked;
-        }
+        if (doorCollider != null) doorCollider.enabled = !isLocked;
     }
 
     public override void Interact()
@@ -40,16 +38,6 @@ public class TeleportDoor : Interactable
         if (blackScreenImage != null)
         {
             blackScreenImage.gameObject.SetActive(true);
-
-            blackScreenImage.transform.SetAsLastSibling();
-
-            Color c = blackScreenImage.color;
-            c.a = 0f;
-            blackScreenImage.color = c;
-        }
-
-        if (blackScreenImage != null)
-        {
             float timer = 0f;
             while (timer < fadeDuration)
             {
@@ -63,10 +51,7 @@ public class TeleportDoor : Interactable
             final.a = 1f;
             blackScreenImage.color = final;
         }
-        else
-        {
-            yield return new WaitForSeconds(fadeDuration);
-        }
+        else { yield return new WaitForSeconds(fadeDuration); }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
@@ -80,13 +65,7 @@ public class TeleportDoor : Interactable
 
             if (camController != null)
             {
-                camController.MoveToRoom(cameraTarget, roomCameraSize);
-                camController.SnapImmediately();
-            }
-            else
-            {
-                Camera.main.transform.position = new Vector3(cameraTarget.position.x, cameraTarget.position.y, -10f);
-                Camera.main.orthographicSize = roomCameraSize;
+                camController.MoveToRoom(cameraTarget, targetResolution, roomBounds);
             }
         }
 
@@ -106,7 +85,6 @@ public class TeleportDoor : Interactable
             Color final = blackScreenImage.color;
             final.a = 0f;
             blackScreenImage.color = final;
-
             blackScreenImage.gameObject.SetActive(false);
         }
     }

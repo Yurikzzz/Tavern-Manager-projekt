@@ -3089,7 +3089,8 @@ MonoBehaviour:
   promptUI: {fileID: 1656919310}
   playerDestination: {fileID: 1826438186}
   cameraTarget: {fileID: 559011278}
-  roomCameraSize: 7
+  targetResolution: 1
+  roomBounds: {fileID: 0}
   blackScreenImage: {fileID: 852575752}
   fadeDuration: 0.5
 --- !u!212 &490374647
@@ -3328,6 +3329,7 @@ GameObject:
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3447,7 +3449,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.84, y: 0, z: -10}
+  m_LocalPosition: {x: 0.14, y: 0.82, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3462,12 +3464,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ComponentVersion: 1
+  m_AssetsPPU: 16
+  m_RefResolutionX: 600
+  m_RefResolutionY: 360
+  m_CropFrame: 0
+  m_GridSnapping: 0
+  m_FilterMode: 0
+  m_UpscaleRT: 0
+  m_PixelSnapping: 0
+  m_CropFrameX: 0
+  m_CropFrameY: 0
+  m_StretchFill: 0
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3230a4e4d850b14dbc3c170f0ee30c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentTarget: {fileID: 1565594495}
-  moveSpeed: 3
-  zoomSpeed: 3
+  playerTransform: {fileID: 231987555}
 --- !u!1 &520065109
 GameObject:
   m_ObjectHideFlags: 0
@@ -3666,7 +3690,8 @@ MonoBehaviour:
   promptUI: {fileID: 398571840}
   playerDestination: {fileID: 1555790282}
   cameraTarget: {fileID: 1241315242}
-  roomCameraSize: 7
+  targetResolution: 1
+  roomBounds: {fileID: 0}
   blackScreenImage: {fileID: 852575752}
   fadeDuration: 0.5
 --- !u!212 &550247711
@@ -5191,8 +5216,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc5a2bed760e9014ebfc4535904064a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetZoom: 7
   focus: {fileID: 2129069919}
+  targetResolution: 1
+  roomBounds: {fileID: 0}
 --- !u!61 &719679491
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7103,7 +7129,8 @@ MonoBehaviour:
   promptUI: {fileID: 142449940}
   playerDestination: {fileID: 505628202}
   cameraTarget: {fileID: 1241315242}
-  roomCameraSize: 7
+  targetResolution: 1
+  roomBounds: {fileID: 0}
   blackScreenImage: {fileID: 852575752}
   fadeDuration: 0.5
 --- !u!212 &915796631
@@ -8563,7 +8590,8 @@ MonoBehaviour:
   promptUI: {fileID: 520065109}
   playerDestination: {fileID: 1504160619}
   cameraTarget: {fileID: 1241315242}
-  roomCameraSize: 7
+  targetResolution: 1
+  roomBounds: {fileID: 0}
   blackScreenImage: {fileID: 852575752}
   fadeDuration: 0.5
 --- !u!212 &1137458550
@@ -9517,7 +9545,8 @@ MonoBehaviour:
   promptUI: {fileID: 641904907}
   playerDestination: {fileID: 1685756263}
   cameraTarget: {fileID: 1196081863}
-  roomCameraSize: 7
+  targetResolution: 1
+  roomBounds: {fileID: 0}
   blackScreenImage: {fileID: 852575752}
   fadeDuration: 0.5
 --- !u!212 &1356741164
@@ -10089,7 +10118,8 @@ MonoBehaviour:
   promptUI: {fileID: 138298197}
   playerDestination: {fileID: 1114958883}
   cameraTarget: {fileID: 901620984}
-  roomCameraSize: 7
+  targetResolution: 1
+  roomBounds: {fileID: 0}
   blackScreenImage: {fileID: 852575752}
   fadeDuration: 0.5
 --- !u!212 &1428370942
@@ -11686,7 +11716,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -3.8440275, y: 0.95040035}
+  m_Offset: {x: -3.854515, y: -2.0853367}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -11696,7 +11726,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 42.940285, y: 10.791021}
+  m_Size: {x: 43.52027, y: 16.724281}
   m_EdgeRadius: 0
 --- !u!114 &1565594497
 MonoBehaviour:
@@ -11710,8 +11740,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc5a2bed760e9014ebfc4535904064a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetZoom: 12.5
   focus: {fileID: 1620549545}
+  targetResolution: 0
+  roomBounds: {fileID: 1565594496}
 --- !u!1 &1574420395
 GameObject:
   m_ObjectHideFlags: 0
@@ -12979,7 +13010,8 @@ MonoBehaviour:
   promptUI: {fileID: 783411928}
   playerDestination: {fileID: 1820732521}
   cameraTarget: {fileID: 1620549545}
-  roomCameraSize: 5
+  targetResolution: 0
+  roomBounds: {fileID: 1565594496}
   blackScreenImage: {fileID: 852575752}
   fadeDuration: 0.5
 --- !u!61 &1778959483
@@ -13239,7 +13271,8 @@ MonoBehaviour:
   promptUI: {fileID: 655635679}
   playerDestination: {fileID: 1895183574}
   cameraTarget: {fileID: 1241315242}
-  roomCameraSize: 7
+  targetResolution: 1
+  roomBounds: {fileID: 0}
   blackScreenImage: {fileID: 852575752}
   fadeDuration: 0.5
 --- !u!61 &1820732520
