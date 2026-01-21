@@ -6,15 +6,17 @@ public class TeleportDoor : Interactable
 {
     [Header("Destinations")]
     public Transform playerDestination;
-    public Transform cameraTarget; 
+    public Transform cameraTarget;
 
     [Header("Camera Settings")]
     public RoomCameraController.ResolutionType targetResolution;
-    public Collider2D roomBounds; 
+    public Collider2D roomBounds;
 
     [Header("UI")]
     public Image blackScreenImage;
     public float fadeDuration = 0.5f;
+
+    private static bool isGlobalTransitionActive = false;
 
     private Collider2D doorCollider;
 
@@ -30,6 +32,10 @@ public class TeleportDoor : Interactable
 
     public override void Interact()
     {
+        if (isGlobalTransitionActive) return;
+
+        isGlobalTransitionActive = true;
+
         StartCoroutine(TeleportRoutine());
     }
 
@@ -51,7 +57,10 @@ public class TeleportDoor : Interactable
             final.a = 1f;
             blackScreenImage.color = final;
         }
-        else { yield return new WaitForSeconds(fadeDuration); }
+        else
+        {
+            yield return new WaitForSeconds(fadeDuration);
+        }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
@@ -62,7 +71,6 @@ public class TeleportDoor : Interactable
         if (Camera.main != null)
         {
             RoomCameraController camController = Camera.main.GetComponent<RoomCameraController>();
-
             if (camController != null)
             {
                 camController.MoveToRoom(cameraTarget, targetResolution, roomBounds);
@@ -87,5 +95,7 @@ public class TeleportDoor : Interactable
             blackScreenImage.color = final;
             blackScreenImage.gameObject.SetActive(false);
         }
+
+        isGlobalTransitionActive = false;
     }
 }
