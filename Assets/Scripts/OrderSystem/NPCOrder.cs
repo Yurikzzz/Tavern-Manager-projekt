@@ -118,6 +118,12 @@ public class NPCOrder : MonoBehaviour
 
             rewardCoins = CurrentOrder.dish.coinReward;
             rewardPop = CurrentOrder.dish.popularityReward;
+
+            if (UpgradeManager.Instance != null)
+            {
+                rewardCoins += UpgradeManager.Instance.TotalCoinBonus;
+                rewardPop += UpgradeManager.Instance.TotalPopularityBonus;
+            }
         }
         else
         {
