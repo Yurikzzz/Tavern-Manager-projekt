@@ -6,14 +6,17 @@ using System.Collections;
 public class StoryIntroController : MonoBehaviour
 {
     [Header("UI References")]
-    public GameObject introPanelRoot;    
-    public RectTransform paperRect;    
-    public TextMeshProUGUI storyText;  
+    public GameObject introPanelRoot;   
+    public RectTransform paperRect;        
+    public TextMeshProUGUI storyText;     
     public GameObject stampVisual;      
-    public Button stampButton;           
+    public Button stampButton;          
+
+    [Header("QoL")]
+    public GameObject stampPromptText;    
 
     [Header("Animation Settings")]
-    public float slideDuration = 0.8f;
+    public float slideDuration = 1.0f;     
     public float stampImpactDuration = 0.3f;
     public Vector2 offScreenPosition = new Vector2(0, -1000);
     public Vector2 centerPosition = Vector2.zero;
@@ -31,21 +34,11 @@ public class StoryIntroController : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("StoryIntroController Started.");
+        if (stampPromptText != null) stampPromptText.SetActive(false);
 
-        if (GameTimeManager.Instance == null)
+        if (GameTimeManager.Instance != null && GameTimeManager.Instance.CurrentDay == 1)
         {
-            Debug.LogError("GameTimeManager not found! Make sure it is in the scene.");
-            return;
-        }
-
-        Debug.Log($"Current Day is: {GameTimeManager.Instance.CurrentDay}");
-
-        if (GameTimeManager.Instance.CurrentDay == 1)
-        {
-            Debug.Log("Day 1 detected. Starting Intro...");
             if (introPanelRoot != null) introPanelRoot.SetActive(true);
-
             StartCoroutine(StartIntroSequence());
         }
         else
@@ -56,20 +49,24 @@ public class StoryIntroController : MonoBehaviour
 
     private IEnumerator StartIntroSequence()
     {
-        Time.timeScale = 0f;
-
         if (stampVisual != null) stampVisual.SetActive(false);
-
         if (storyText != null) storyText.text = letterContent;
+        if (stampButton != null) stampButton.interactable = false;
+
+        if (stampPromptText != null) stampPromptText.SetActive(true);
 
         if (paperRect != null) paperRect.anchoredPosition = offScreenPosition;
+
+        yield return null;
+
+        Time.timeScale = 0f;
 
         float elapsed = 0f;
         while (elapsed < slideDuration)
         {
-            elapsed += Time.unscaledDeltaTime;
+            elapsed += Time.unscaledDeltaTime; 
             float t = elapsed / slideDuration;
-            t = t * t * (3f - 2f * t);
+            t = t * t * (3f - 2f * t); 
 
             if (paperRect != null)
                 paperRect.anchoredPosition = Vector2.Lerp(offScreenPosition, centerPosition, t);
@@ -86,6 +83,9 @@ public class StoryIntroController : MonoBehaviour
     {
         if (hasStamped) return;
         hasStamped = true;
+
+        if (stampPromptText != null) stampPromptText.SetActive(false);
+
         StartCoroutine(StampAnimationSequence());
     }
 
@@ -123,7 +123,6 @@ public class StoryIntroController : MonoBehaviour
             yield return null;
         }
 
-         
         if (introPanelRoot != null) introPanelRoot.SetActive(false);
         Time.timeScale = 1f; 
     }
