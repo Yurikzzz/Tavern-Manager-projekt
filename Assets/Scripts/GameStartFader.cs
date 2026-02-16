@@ -6,7 +6,7 @@ public class GameStartFader : MonoBehaviour
 {
     public Image blackScreen;
     public float fadeSpeed = 1f;
-    public float startDelay = 0.5f; 
+    public float startDelay = 0.5f;
 
     void Start()
     {
@@ -23,12 +23,15 @@ public class GameStartFader : MonoBehaviour
 
     IEnumerator FadeInRoutine()
     {
-        yield return new WaitForSecondsRealtime(startDelay);
+        // 1. REVERTED: Now uses standard time. If the game is paused, this timer pauses too!
+        yield return new WaitForSeconds(startDelay);
 
         float alpha = 1f;
         while (alpha > 0)
         {
-            alpha -= Time.unscaledDeltaTime * fadeSpeed;
+            // 2. REVERTED: Now uses Time.deltaTime. 
+            // If the game is paused (timeScale = 0), alpha stops changing.
+            alpha -= Time.deltaTime * fadeSpeed;
 
             if (blackScreen != null)
             {

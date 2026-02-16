@@ -39,16 +39,7 @@ public class GameTimeManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        Instance = this;
 
         if (backgroundRenderer == null)
             backgroundRenderer = GetComponent<SpriteRenderer>();
@@ -56,11 +47,9 @@ public class GameTimeManager : MonoBehaviour
             backgroundRenderer = GetComponentInChildren<SpriteRenderer>();
 
         if (backgroundRenderer == null)
-            Debug.LogWarning("GameTimeManager: No SpriteRenderer assigned. Assign one in inspector.");
+            Debug.LogWarning("GameTimeManager: No SpriteRenderer assigned.");
 
         ApplyBackgroundForTime(CurrentTime);
-
-        Debug.Log($"Current day: {CurrentDay}, Time: {CurrentTime}");
     }
 
     void Start()

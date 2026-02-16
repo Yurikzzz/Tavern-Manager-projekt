@@ -64,4 +64,14 @@ public class SaveManager : MonoBehaviour
             Debug.Log("No save file found. Starting fresh.");
         }
     }
+
+    public void StartNewGame()
+    {
+        currentData = new GameData();
+
+        string json = JsonUtility.ToJson(currentData, true);
+        System.IO.File.WriteAllText(savePath, json);
+
+        Debug.Log("Started a new game. Old save wiped cleanly.");
+    }
 }
