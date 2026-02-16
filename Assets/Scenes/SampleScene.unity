@@ -4516,6 +4516,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuPanel: {fileID: 43912225}
+  startPopup: {fileID: 1957638344}
 --- !u!1 &398571840
 GameObject:
   m_ObjectHideFlags: 0

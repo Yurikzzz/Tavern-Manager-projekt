@@ -1,9 +1,9 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PauseManager : MonoBehaviour
 {
     public GameObject pauseMenuPanel;
+    public GameObject startPopup;
 
     public static bool isPaused = false;
 
@@ -11,34 +11,30 @@ public class PauseManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isPaused)
-            {
-                Resume();
-            }
-            else
-            {
-                Pause();
-            }
+            if (isPaused) Resume();
+            else Pause();
         }
+    }
+
+    public void Pause()
+    {
+        isPaused = true;
+        pauseMenuPanel.SetActive(true);
+        Time.timeScale = 0f;
     }
 
     public void Resume()
     {
-        pauseMenuPanel.SetActive(false); 
-        Time.timeScale = 1f; 
         isPaused = false;
-    }
+        pauseMenuPanel.SetActive(false);
 
-    void Pause()
-    {
-        pauseMenuPanel.SetActive(true); 
-        Time.timeScale = 0f;  
-        isPaused = true;
-    }
-
-    public void QuitToMenu()
-    {
-        Time.timeScale = 1f; 
-        SceneManager.LoadScene("MainMenu");
+        if (startPopup != null && !startPopup.activeSelf)
+        {
+            Time.timeScale = 1f;
+        }
+        else if (startPopup == null)
+        {
+            Time.timeScale = 1f;
+        }
     }
 }
