@@ -8,6 +8,11 @@ public class PauseManager : MonoBehaviour
 
     public static bool isPaused = false;
 
+    void Awake()
+    {
+        isPaused = false;
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -33,8 +38,10 @@ public class PauseManager : MonoBehaviour
 
     public void QuitToMenu()
     {
-        Time.timeScale = 1f; 
-        SceneManager.LoadScene("MainMenu"); 
+        isPaused = false;
+        TimeManager.Reset();
+
+        SceneManager.LoadScene("MainMenu");
     }
 }
 
@@ -59,5 +66,12 @@ public static class TimeManager
     {
         Time.timeScale = (pauseRequests > 0) ? 0f : 1f;
         Debug.Log("Current Pause Requests: " + pauseRequests);
+    }
+
+    public static void Reset()
+    {
+        pauseRequests = 0;
+        Time.timeScale = 1f;
+        Debug.Log("TimeManager: Counter reset to 0. Time is flowing.");
     }
 }

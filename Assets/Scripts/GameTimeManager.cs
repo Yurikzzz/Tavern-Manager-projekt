@@ -68,8 +68,6 @@ public class GameTimeManager : MonoBehaviour
         if (SaveManager.instance != null)
         {
             CurrentDay = SaveManager.instance.currentData.dayNumber;
-
-            OnDayChanged?.Invoke(CurrentDay);
         }
     }
 
