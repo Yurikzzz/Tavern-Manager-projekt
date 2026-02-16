@@ -34,6 +34,7 @@ public class DaySummaryUI : MonoBehaviour
         coinsToApply = coins;
         popularityToApply = popularity;
 
+        TimeManager.RequestPause();
         Time.timeScale = 0f;
     }
 
@@ -43,6 +44,7 @@ public class DaySummaryUI : MonoBehaviour
         DailyRewardManager.Instance?.ResetDaily();
 
         Time.timeScale = 1f;
+        TimeManager.RequestUnpause();
         Destroy(gameObject);
     }
 

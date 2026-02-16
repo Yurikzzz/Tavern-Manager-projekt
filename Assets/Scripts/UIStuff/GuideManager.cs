@@ -47,9 +47,16 @@ public class GuideManager : MonoBehaviour
     {
         isOpen = !isOpen;
         guideUIRoot.SetActive(isOpen);
-        Time.timeScale = isOpen ? 0f : 1f;
 
-        if (isOpen) ShowSection("Movement");
+        if (isOpen)
+        {
+            TimeManager.RequestPause(); 
+            ShowSection("Movement");
+        }
+        else
+        {
+            TimeManager.RequestUnpause();
+        }
     }
 
     public void ShowSection(string sectionName)

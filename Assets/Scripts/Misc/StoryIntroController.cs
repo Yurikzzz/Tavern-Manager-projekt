@@ -59,6 +59,7 @@ public class StoryIntroController : MonoBehaviour
 
         yield return null;
 
+        TimeManager.RequestPause();
         Time.timeScale = 0f;
 
         float elapsed = 0f;
@@ -125,5 +126,6 @@ public class StoryIntroController : MonoBehaviour
 
         if (introPanelRoot != null) introPanelRoot.SetActive(false);
         Time.timeScale = 1f; 
+        TimeManager.RequestUnpause();
     }
 }

@@ -29,11 +29,14 @@ public class ShopController : MonoBehaviour
         isOpen = !isOpen;
         shopWindow.SetActive(isOpen);
 
-        Time.timeScale = isOpen ? 0 : 1;
-
         if (isOpen)
         {
+            TimeManager.RequestPause(); 
             RefreshAllItems();
+        }
+        else
+        {
+            TimeManager.RequestUnpause(); 
         }
     }
 
