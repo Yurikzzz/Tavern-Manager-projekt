@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq; 
 
 public class UpgradeManager : MonoBehaviour
 {
@@ -19,6 +20,44 @@ public class UpgradeManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
+
+    void Start()
+    {
+        if (SaveManager.instance != null)
+        {
+            LoadSavedUpgrades(SaveManager.instance.currentData.boughtUpgrades);
+        }
+    }
+
+    private void LoadSavedUpgrades(List<string> savedIDs)
+    {
+        purchasedUpgradeIDs.Clear();
+        TotalCoinBonus = 0;
+        TotalPopularityBonus = 0;
+
+        foreach (string savedID in savedIDs)
+        {
+            purchasedUpgradeIDs.Add(savedID);
+
+            foreach (UpgradeData upgrade in allUpgrades)
+            {
+                if (upgrade.ID == savedID)
+                {
+                    TotalCoinBonus += upgrade.coinIncomeBonus;
+                    TotalPopularityBonus += upgrade.popularityBonus;
+                    break;
+                }
+            }
+        }
+
+        Debug.Log($"Loaded {purchasedUpgradeIDs.Count} upgrades. Total Coin Bonus: {TotalCoinBonus}");
+    }
+
+    public List<string> GetPurchasedUpgradesList()
+    {
+        return purchasedUpgradeIDs.ToList();
+    }
+
 
     public bool HasPurchased(UpgradeData upgrade)
     {

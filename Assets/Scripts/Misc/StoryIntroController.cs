@@ -32,8 +32,10 @@ public class StoryIntroController : MonoBehaviour
 
     private bool hasStamped = false;
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return null;
+
         if (stampPromptText != null) stampPromptText.SetActive(false);
 
         if (GameTimeManager.Instance != null && GameTimeManager.Instance.CurrentDay == 1)
@@ -60,7 +62,6 @@ public class StoryIntroController : MonoBehaviour
         yield return null;
 
         TimeManager.RequestPause();
-        Time.timeScale = 0f;
 
         float elapsed = 0f;
         while (elapsed < slideDuration)
@@ -125,7 +126,6 @@ public class StoryIntroController : MonoBehaviour
         }
 
         if (introPanelRoot != null) introPanelRoot.SetActive(false);
-        Time.timeScale = 1f; 
         TimeManager.RequestUnpause();
     }
 }

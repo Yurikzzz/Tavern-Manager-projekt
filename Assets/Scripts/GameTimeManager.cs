@@ -63,6 +63,16 @@ public class GameTimeManager : MonoBehaviour
         Debug.Log($"Current day: {CurrentDay}, Time: {CurrentTime}");
     }
 
+    void Start()
+    {
+        if (SaveManager.instance != null)
+        {
+            CurrentDay = SaveManager.instance.currentData.dayNumber;
+
+            OnDayChanged?.Invoke(CurrentDay);
+        }
+    }
+
     public void AdvanceTime()
     {
         switch (CurrentTime)

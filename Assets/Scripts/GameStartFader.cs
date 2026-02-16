@@ -23,12 +23,12 @@ public class GameStartFader : MonoBehaviour
 
     IEnumerator FadeInRoutine()
     {
-        yield return new WaitForSeconds(startDelay);
+        yield return new WaitForSecondsRealtime(startDelay);
 
         float alpha = 1f;
         while (alpha > 0)
         {
-            alpha -= Time.deltaTime * fadeSpeed;
+            alpha -= Time.unscaledDeltaTime * fadeSpeed;
 
             if (blackScreen != null)
             {
@@ -44,7 +44,6 @@ public class GameStartFader : MonoBehaviour
             Color c = blackScreen.color;
             c.a = 0f;
             blackScreen.color = c;
-
             blackScreen.raycastTarget = false;
         }
     }

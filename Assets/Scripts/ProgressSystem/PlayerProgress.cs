@@ -27,6 +27,12 @@ public class PlayerProgress : MonoBehaviour
 
     void Start()
     {
+        if (SaveManager.instance != null)
+        {
+            Coins = SaveManager.instance.currentData.coins;
+            Popularity = SaveManager.instance.currentData.popularity;
+        }
+
         OnCoinsChanged?.Invoke(Coins);
         OnPopularityChanged?.Invoke(Popularity);
     }
