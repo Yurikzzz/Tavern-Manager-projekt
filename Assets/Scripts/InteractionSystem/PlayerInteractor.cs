@@ -12,6 +12,8 @@ public class PlayerInteractor : MonoBehaviour
     {
         CheckForInteractable();
 
+        if (PauseManager.isPaused) return;
+
         if (currentTarget != null)
         {
             if (lastTarget != currentTarget)

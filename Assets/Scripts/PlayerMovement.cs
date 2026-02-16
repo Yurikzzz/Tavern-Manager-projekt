@@ -20,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (PauseManager.isPaused) return;
+
         moveInput = Input.GetAxisRaw("Horizontal");
 
         bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
