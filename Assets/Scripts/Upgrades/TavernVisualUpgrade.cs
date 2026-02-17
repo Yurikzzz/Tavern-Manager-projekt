@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class TavernVisualUpgrade : MonoBehaviour
 {
@@ -19,10 +20,12 @@ public class TavernVisualUpgrade : MonoBehaviour
     public SpriteRenderer[] spritesToChange;
     [Tooltip("If true, it uses the sprite from the UpgradeData. If false, uses the one below.")]
     public bool useIconFromUpgrade = false;
-    public Sprite alternativeSprite; 
+    public Sprite alternativeSprite;
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return null;
+
         UpdateVisuals();
 
         if (UpgradeManager.Instance != null)
