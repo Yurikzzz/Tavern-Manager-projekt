@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: cush_01
   displayName: Chair cushions
-  cost: 50
+  cost: 1
   coinIncomeBonus: 3
   popularityBonus: 1
   visualSprite: {fileID: 21300000, guid: cd5b2bce2301b5b4a878424c65c81c91, type: 3}

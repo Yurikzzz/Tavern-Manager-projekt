@@ -34,6 +34,8 @@ public class StoryIntroController : MonoBehaviour
 
     IEnumerator Start()
     {
+        if (paperRect != null) paperRect.anchoredPosition = offScreenPosition;
+
         yield return null;
 
         if (stampPromptText != null) stampPromptText.SetActive(false);
@@ -57,18 +59,14 @@ public class StoryIntroController : MonoBehaviour
 
         if (stampPromptText != null) stampPromptText.SetActive(true);
 
-        if (paperRect != null) paperRect.anchoredPosition = offScreenPosition;
-
-        yield return null;
-
         TimeManager.RequestPause();
 
         float elapsed = 0f;
         while (elapsed < slideDuration)
         {
-            elapsed += Time.unscaledDeltaTime; 
+            elapsed += Time.unscaledDeltaTime;
             float t = elapsed / slideDuration;
-            t = t * t * (3f - 2f * t); 
+            t = t * t * (3f - 2f * t);
 
             if (paperRect != null)
                 paperRect.anchoredPosition = Vector2.Lerp(offScreenPosition, centerPosition, t);
@@ -77,7 +75,6 @@ public class StoryIntroController : MonoBehaviour
         }
 
         if (paperRect != null) paperRect.anchoredPosition = centerPosition;
-
         if (stampButton != null) stampButton.interactable = true;
     }
 
