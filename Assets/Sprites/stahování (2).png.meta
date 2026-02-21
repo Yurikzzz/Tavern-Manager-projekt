@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 5ea589466eedfe2429a4e83b605fce13
+guid: 1e4814e6c43eed542960cf6315857b87
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3912775822545530217
-    second: PlayerModel_0
+      213: 8530831887407609194
+    second: "stahov\xE1n\xED (2)_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayerModel_0
+      name: "stahov\xE1n\xED (2)_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 28
-        height: 64
+        width: 168
+        height: 130
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 96d209c31e8fc4630800000000000000
-      internalID: 3912775822545530217
+      spriteID: a65718f376a936670800000000000000
+      internalID: 8530831887407609194
       vertices: []
       indices: 
       edges: []
@@ -125,19 +125,17 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    spriteID: 
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
-    secondaryTextures:
-    - texture: {fileID: 2800000, guid: fc0b214c62bfb2d4aa68f3581d94de37, type: 3}
-      name: _NormalMap
+    secondaryTextures: []
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PlayerModel_0: 3912775822545530217
+      "stahov\xE1n\xED (2)_0": 8530831887407609194
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

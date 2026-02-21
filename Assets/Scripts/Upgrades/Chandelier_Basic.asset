@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: chan_01
   displayName: Chandelier
-  cost: 1
+  cost: 0
   coinIncomeBonus: 5
   popularityBonus: 1
   visualSprite: {fileID: 21300000, guid: e90dfe90db0f566489518ffa95afa6d6, type: 3}
