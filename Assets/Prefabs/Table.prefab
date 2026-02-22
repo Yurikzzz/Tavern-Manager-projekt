@@ -440,6 +440,7 @@ GameObject:
   - component: {fileID: 4788001218152883523}
   - component: {fileID: 914488523534576423}
   - component: {fileID: 3346592149897874119}
+  - component: {fileID: 2238332608314432462}
   m_Layer: 0
   m_Name: Table
   m_TagString: Untagged
@@ -557,6 +558,25 @@ MonoBehaviour:
   spritesToChange: []
   useIconFromUpgrade: 0
   alternativeSprite: {fileID: 0}
+--- !u!114 &2238332608314432462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6763918220856996699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff4ad05ba51cf184db4e33045d8b157f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upgradeRequired: {fileID: 11400000, guid: 232931a2735fb6c469d84cb9e9160ec2, type: 2}
+  showWhenBought: []
+  hideWhenBought: []
+  spritesToChange:
+  - {fileID: 4788001218152883523}
+  useIconFromUpgrade: 0
+  alternativeSprite: {fileID: 21300000, guid: 72c041edc44cf1c4ebc3d050086c18c1, type: 3}
 --- !u!1 &6772825159311759256
 GameObject:
   m_ObjectHideFlags: 0
