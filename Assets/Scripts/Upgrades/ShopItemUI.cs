@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Assuming you are using TextMeshPro (Recommended)
+using TMPro;
 
 public class ShopItemUI : MonoBehaviour
 {
@@ -24,8 +24,11 @@ public class ShopItemUI : MonoBehaviour
 
         string desc = "";
         if (data.coinIncomeBonus > 0) desc += $"Coin Bonus: +{data.coinIncomeBonus}\n";
-        if (data.popularityBonus > 0) desc += $"Popularity Bonus: +{data.popularityBonus}";
-        descriptionText.text = desc;
+        if (data.popularityBonus > 0) desc += $"Popularity Bonus: +{data.popularityBonus}\n";
+
+        if (data.patienceBonus > 0) desc += $"Patience Bonus: +{data.patienceBonus * 100}%\n";
+
+        descriptionText.text = desc.TrimEnd();
 
         buyButton.onClick.RemoveAllListeners();
         buyButton.onClick.AddListener(OnBuyClicked);

@@ -15,6 +15,7 @@ MonoBehaviour:
   ID: board_01
   displayName: Mission board
   cost: 0
-  coinIncomeBonus: 5
-  popularityBonus: 2
+  coinIncomeBonus: 6
+  popularityBonus: 3
+  patienceBonus: 0
   visualSprite: {fileID: 21300000, guid: 788327b8d9da27f46b68ae495304951b, type: 3}

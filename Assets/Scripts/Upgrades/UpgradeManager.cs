@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq; 
+using System.Linq;
 
 public class UpgradeManager : MonoBehaviour
 {
@@ -14,6 +14,7 @@ public class UpgradeManager : MonoBehaviour
 
     public int TotalCoinBonus { get; private set; } = 0;
     public int TotalPopularityBonus { get; private set; } = 0;
+    public float TotalPatienceBonus { get; private set; } = 0f; 
 
     void Awake()
     {
@@ -34,6 +35,7 @@ public class UpgradeManager : MonoBehaviour
         purchasedUpgradeIDs.Clear();
         TotalCoinBonus = 0;
         TotalPopularityBonus = 0;
+        TotalPatienceBonus = 0f; 
 
         foreach (string savedID in savedIDs)
         {
@@ -45,12 +47,13 @@ public class UpgradeManager : MonoBehaviour
                 {
                     TotalCoinBonus += upgrade.coinIncomeBonus;
                     TotalPopularityBonus += upgrade.popularityBonus;
+                    TotalPatienceBonus += upgrade.patienceBonus;
                     break;
                 }
             }
         }
 
-        Debug.Log($"Loaded {purchasedUpgradeIDs.Count} upgrades. Total Coin Bonus: {TotalCoinBonus}");
+        Debug.Log($"Loaded {purchasedUpgradeIDs.Count} upgrades. Total Coin Bonus: {TotalCoinBonus}, Total Patience Bonus: {TotalPatienceBonus}");
     }
 
     public List<string> GetPurchasedUpgradesList()
@@ -75,9 +78,10 @@ public class UpgradeManager : MonoBehaviour
 
             TotalCoinBonus += upgrade.coinIncomeBonus;
             TotalPopularityBonus += upgrade.popularityBonus;
+            TotalPatienceBonus += upgrade.patienceBonus; 
 
             OnUpgradePurchased?.Invoke(upgrade);
-            Debug.Log($"Bought {upgrade.displayName}. New Coin Bonus: +{TotalCoinBonus}");
+            Debug.Log($"Bought {upgrade.displayName}. New Coin Bonus: +{TotalCoinBonus}, New Patience Bonus: +{TotalPatienceBonus}");
         }
         else
         {

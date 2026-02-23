@@ -87,7 +87,15 @@ public class CustomerPatience : MonoBehaviour
     {
         if (!waiting || served) return;
 
-        currentPatience -= Time.deltaTime * drainMultiplier;
+        float actualDrainSpeed = drainMultiplier;
+
+        if (UpgradeManager.Instance != null)
+        {
+            actualDrainSpeed = Mathf.Max(0.1f * drainMultiplier, drainMultiplier - UpgradeManager.Instance.TotalPatienceBonus);
+        }
+
+        currentPatience -= Time.deltaTime * actualDrainSpeed;
+
         if (currentPatience < 0f) currentPatience = 0f;
 
         UpdateBar();

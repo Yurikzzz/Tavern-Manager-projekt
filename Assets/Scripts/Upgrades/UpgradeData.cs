@@ -10,8 +10,10 @@ public class UpgradeData : ScriptableObject
 
     [Header("Bonuses")]
     public int coinIncomeBonus;
-    public int popularityBonus; 
+    public int popularityBonus;
+    [Tooltip("Reduces how fast patience drains. E.g., 0.2 will make the bar empty 20% slower.")]
+    public float patienceBonus;
 
     [Header("Visuals")]
-    public Sprite visualSprite; 
+    public Sprite visualSprite;
 }

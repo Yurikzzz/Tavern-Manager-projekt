@@ -15,6 +15,7 @@ MonoBehaviour:
   ID: upg_table_01
   displayName: Better tables
   cost: 0
-  coinIncomeBonus: 6
+  coinIncomeBonus: 0
   popularityBonus: 3
+  patienceBonus: 0.1
   visualSprite: {fileID: 21300000, guid: 72c041edc44cf1c4ebc3d050086c18c1, type: 3}

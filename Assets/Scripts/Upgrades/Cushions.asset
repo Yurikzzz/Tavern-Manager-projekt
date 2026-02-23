@@ -17,4 +17,5 @@ MonoBehaviour:
   cost: 0
   coinIncomeBonus: 3
   popularityBonus: 1
+  patienceBonus: 0.2
   visualSprite: {fileID: 21300000, guid: cd5b2bce2301b5b4a878424c65c81c91, type: 3}
