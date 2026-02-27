@@ -6,28 +6,29 @@ using System.Collections;
 public class StoryIntroController : MonoBehaviour
 {
     [Header("UI References")]
-    public GameObject introPanelRoot;   
-    public RectTransform paperRect;        
-    public TextMeshProUGUI storyText;     
-    public GameObject stampVisual;      
-    public Button stampButton;          
+    public GameObject introPanelRoot;
+    public RectTransform paperRect;
+    public TextMeshProUGUI storyText;
+    public GameObject stampVisual;
+    public Button stampButton;
 
     [Header("QoL")]
-    public GameObject stampPromptText;    
+    public GameObject stampPromptText;
 
     [Header("Animation Settings")]
-    public float slideDuration = 1.0f;     
+    public float slideDuration = 1.0f;
     public float stampImpactDuration = 0.3f;
     public Vector2 offScreenPosition = new Vector2(0, -1000);
     public Vector2 centerPosition = Vector2.zero;
 
     [Header("Story Settings")]
+    [Tooltip("Use {0} to display target days, and {1} to display target popularity.")]
     [TextArea(5, 10)]
     public string letterContent = "OFFICIAL NOTICE: CITY HALL\n\n" +
         "To the Tavern Owner,\n\n" +
         "Your establishment is failing to meet city standards. " +
-        "You are hereby granted a probational period of 7 days.\n\n" +
-        "Improve your Popularity to 50 or forfeit ownership immediately.\n\n" +
+        "You are hereby granted a probational period of {0} days.\n\n" +
+        "Improve your Popularity to {1} or forfeit ownership immediately.\n\n" +
         "Sign below to acknowledge receipt.";
 
     private bool hasStamped = false;
@@ -54,7 +55,23 @@ public class StoryIntroController : MonoBehaviour
     private IEnumerator StartIntroSequence()
     {
         if (stampVisual != null) stampVisual.SetActive(false);
-        if (storyText != null) storyText.text = letterContent;
+
+        if (storyText != null)
+        {
+            int targetDays = GameGoalManager.Instance != null ? GameGoalManager.Instance.targetDays : 7;
+            int targetPop = GameGoalManager.Instance != null ? GameGoalManager.Instance.targetPopularity : 50;
+
+            try
+            {
+                storyText.text = string.Format(letterContent, targetDays, targetPop);
+            }
+            catch (System.FormatException)
+            {
+                Debug.LogWarning("StoryIntroController: Invalid formatting in letterContent. Make sure to use {0} and {1}. Displaying raw text instead.");
+                storyText.text = letterContent;
+            }
+        }
+
         if (stampButton != null) stampButton.interactable = false;
 
         if (stampPromptText != null) stampPromptText.SetActive(true);
