@@ -45,6 +45,15 @@ public class DaySummaryUI : MonoBehaviour
 
         Time.timeScale = 1f;
         TimeManager.RequestUnpause();
+
+        // --- NEW ADDITION ---
+        // Evaluate Win/Lose right as the summary goes away.
+        if (GameGoalManager.Instance != null && GameTimeManager.Instance != null)
+        {
+            GameGoalManager.Instance.EvaluateGoal(GameTimeManager.Instance.CurrentDay);
+        }
+        // --------------------
+
         Destroy(gameObject);
     }
 
