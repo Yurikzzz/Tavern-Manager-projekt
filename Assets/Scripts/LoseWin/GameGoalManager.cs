@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class GameGoalManager : MonoBehaviour
 {
@@ -13,26 +15,40 @@ public class GameGoalManager : MonoBehaviour
     [Header("Scene Routing")]
     public string mainMenuSceneName = "MainMenu";
 
-    [Header("Win/Lose UI Panels")]
-    [Tooltip("The parent GameObject of the Win Screen.")]
-    public GameObject winPanel;
-    [Tooltip("The parent GameObject of the Lose Screen.")]
-    public GameObject losePanel;
+    [Header("UI References")]
+    public GameObject evaluationPanelRoot;
+    public RectTransform paperRect;
+    public TextMeshProUGUI letterText;
+    public GameObject stampVisual;
+    public Button stampButton;
+    public GameObject stampPromptText;
 
-    [Header("Win/Lose UI Text")]
-    public TextMeshProUGUI winTextComponent;
-    public TextMeshProUGUI loseTextComponent;
+    [Header("Animation Settings")]
+    public float slideDuration = 1.0f;
+    public float stampImpactDuration = 0.3f;
+    public Vector2 offScreenPosition = new Vector2(0, -1000);
+    public Vector2 centerPosition = Vector2.zero;
 
     [Header("Messages")]
-    [Tooltip("Use {0} for the Player's Final Popularity, and {1} for Target Days.")]
-    [TextArea(3, 5)]
-    public string winMessage = "Congratulations! You saved the tavern!\n\nYou managed to get {0} popularity in {1} days.";
+    [Tooltip("Use {0} for Actual Popularity, and {1} for Target Days.")]
+    [TextArea(5, 10)]
+    public string winMessage = "OFFICIAL NOTICE: CITY HALL\n\n" +
+        "To the Tavern Owner,\n\n" +
+        "Following your probational period of {1} days, we have concluded our review.\n\n" +
+        "You have achieved a Popularity of {0}, exceeding city standards. Your establishment license is hereby fully reinstated.\n\n" +
+        "Sign below to acknowledge receipt.";
 
-    [Tooltip("Use {0} for the Player's Final Popularity, and {1} for Target Days.")]
-    [TextArea(3, 5)]
-    public string loseMessage = "You failed the city's inspection...\n\nYou only managed to get {0} popularity in {1} days.\n\nThe tavern will be closed down.";
+    [Tooltip("Use {0} for Actual Popularity, and {1} for Target Days.")]
+    [TextArea(5, 10)]
+    public string loseMessage = "OFFICIAL NOTICE: CITY HALL\n\n" +
+        "To the Tavern Owner,\n\n" +
+        "Following your probational period of {1} days, we have concluded our review.\n\n" +
+        "You have only achieved a Popularity of {0}, failing to meet city standards. You are ordered to close the tavern immediately.\n\n" +
+        "Sign below to forfeit ownership.";
 
     private bool hasEvaluated = false;
+    private bool hasStamped = false;
+    private bool isWinResult = false;
 
     private void Awake()
     {
@@ -42,88 +58,126 @@ public class GameGoalManager : MonoBehaviour
 
     private void Start()
     {
-        // Make sure both screens are hidden on start
-        if (winPanel != null) winPanel.SetActive(false);
-        if (losePanel != null) losePanel.SetActive(false);
+        if (evaluationPanelRoot != null) evaluationPanelRoot.SetActive(false);
 
-        // Don't evaluate if we are loading a save already past the deadline
         if (GameTimeManager.Instance.CurrentDay > targetDays)
         {
             hasEvaluated = true;
         }
     }
 
-    // This is now called by the DaySummaryUI, NOT the DayChange Event
     public void EvaluateGoal(int currentDay)
     {
         if (hasEvaluated) return;
 
-        // E.g., Target is 7 days. On the morning of Day 8, DaySummaryUI closes and triggers this.
         if (currentDay > targetDays)
         {
             hasEvaluated = true;
-
-            // Get the player's actual popularity they achieved
             int actualPopularity = PlayerProgress.Instance.Popularity;
+            isWinResult = actualPopularity >= targetPopularity;
 
-            if (actualPopularity >= targetPopularity)
-            {
-                ShowWinScreen(actualPopularity);
-            }
-            else
-            {
-                ShowLoseScreen(actualPopularity);
-            }
+            StartCoroutine(ShowEvaluationLetter(actualPopularity));
         }
     }
 
-    private void ShowWinScreen(int finalPopularity)
+    private IEnumerator ShowEvaluationLetter(int finalPopularity)
     {
-        if (winPanel != null) winPanel.SetActive(true);
-        if (winTextComponent != null)
+        if (evaluationPanelRoot != null) evaluationPanelRoot.SetActive(true);
+        if (stampVisual != null) stampVisual.SetActive(false);
+        if (stampButton != null) stampButton.interactable = false;
+        if (stampPromptText != null) stampPromptText.SetActive(true);
+
+        hasStamped = false;
+
+        if (letterText != null)
         {
-            winTextComponent.text = string.Format(winMessage, finalPopularity, targetDays);
+            string template = isWinResult ? winMessage : loseMessage;
+            letterText.text = string.Format(template, finalPopularity, targetDays);
         }
 
-        // Pause the game so they can read the win screen
+        if (paperRect != null) paperRect.anchoredPosition = offScreenPosition;
+
         TimeManager.RequestPause();
         Time.timeScale = 0f;
-    }
 
-    private void ShowLoseScreen(int finalPopularity)
-    {
-        if (losePanel != null) losePanel.SetActive(true);
-        if (loseTextComponent != null)
+        float elapsed = 0f;
+        while (elapsed < slideDuration)
         {
-            loseTextComponent.text = string.Format(loseMessage, finalPopularity, targetDays);
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / slideDuration;
+            t = t * t * (3f - 2f * t);
+
+            if (paperRect != null)
+                paperRect.anchoredPosition = Vector2.Lerp(offScreenPosition, centerPosition, t);
+
+            yield return null;
         }
 
-        // Pause the game so they can read the lose screen
-        TimeManager.RequestPause();
-        Time.timeScale = 0f;
+        if (paperRect != null) paperRect.anchoredPosition = centerPosition;
+        if (stampButton != null) stampButton.interactable = true;
     }
 
-    // --- BUTTON EVENTS ---
-
-    // Assign this to your "Continue" button on the Win Screen
-    public void ContinueSandboxMode()
+    public void OnStampClicked()
     {
-        if (winPanel != null) winPanel.SetActive(false);
-        Time.timeScale = 1f;
-        TimeManager.RequestUnpause();
+        if (hasStamped) return;
+        hasStamped = true;
+
+        if (stampPromptText != null) stampPromptText.SetActive(false);
+
+        StartCoroutine(StampAndResolveSequence());
     }
 
-    // Assign this to your "Head Back" button on the Lose Screen
-    public void ReturnToMainMenuAndWipe()
+    private IEnumerator StampAndResolveSequence()
     {
-        // Unpause before loading a scene just to be safe
-        Time.timeScale = 1f;
+        if (stampVisual != null) stampVisual.SetActive(true);
+        if (stampButton != null) stampButton.interactable = false;
 
-        if (SaveManager.instance != null)
+        Transform stampTrans = stampVisual.transform;
+        Vector3 startScale = new Vector3(1.5f, 1.5f, 1f);
+        Vector3 endScale = Vector3.one;
+
+        float elapsed = 0f;
+        while (elapsed < stampImpactDuration)
         {
-            SaveManager.instance.StartNewGame();
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / stampImpactDuration;
+            stampTrans.localScale = Vector3.Lerp(startScale, endScale, t);
+            yield return null;
         }
+        stampTrans.localScale = endScale;
 
-        SceneManager.LoadScene(mainMenuSceneName);
+        yield return new WaitForSecondsRealtime(0.8f);
+
+        if (isWinResult)
+        {
+            elapsed = 0f;
+            while (elapsed < slideDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = elapsed / slideDuration;
+                t = t * t * (3f - 2f * t);
+
+                if (paperRect != null)
+                    paperRect.anchoredPosition = Vector2.Lerp(centerPosition, offScreenPosition, t);
+
+                yield return null;
+            }
+
+            if (evaluationPanelRoot != null) evaluationPanelRoot.SetActive(false);
+
+            Time.timeScale = 1f;
+            TimeManager.RequestUnpause();
+        }
+        else
+        {
+            Time.timeScale = 1f;
+
+            if (SaveManager.instance != null)
+            {
+                SaveManager.instance.StartNewGame();
+            }
+
+            SceneManager.LoadScene(mainMenuSceneName);
+        }
     }
 }

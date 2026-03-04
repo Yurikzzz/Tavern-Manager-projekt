@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI; // Added this to access the Image component
 using System;
 using System.Collections;
 
@@ -16,6 +17,11 @@ public class GameTimeManager : MonoBehaviour
     [Header("Time Settings")]
     [Tooltip("How long the tavern stays open (in seconds) before automatically closing.")]
     public float afternoonDuration = 300f;
+
+    [Header("Transitions")]
+    [Tooltip("Assign the exact same Black Screen Image you use for your GameStartFader here.")]
+    public Image fadeImage;
+    public float fadeDuration = 1.0f;
 
     public enum TimeOfDay { Morning, Afternoon, Night }
     public TimeOfDay CurrentTime { get; private set; } = TimeOfDay.Morning;
@@ -48,6 +54,7 @@ public class GameTimeManager : MonoBehaviour
 
         if (backgroundRenderer == null)
             Debug.LogWarning("GameTimeManager: No SpriteRenderer assigned.");
+
 
         ApplyBackgroundForTime(CurrentTime);
     }
@@ -103,7 +110,7 @@ public class GameTimeManager : MonoBehaviour
         while (afternoonTimerElapsed < afternoonDuration)
         {
             afternoonTimerElapsed += Time.deltaTime;
-            yield return null; 
+            yield return null;
         }
 
         Debug.Log("GameTimeManager: Afternoon time limit reached. Closing tavern.");
@@ -132,14 +139,61 @@ public class GameTimeManager : MonoBehaviour
     {
         if (CurrentTime == TimeOfDay.Night)
         {
-            CurrentDay++;
-            SetTime(TimeOfDay.Morning);
-            OnDayChanged?.Invoke(CurrentDay);
-            Debug.Log($"New day started: Day {CurrentDay}");
+            StartCoroutine(DayTransitionSequence());
         }
         else
         {
             Debug.LogWarning("Cannot advance to next day unless it's night.");
+        }
+    }
+
+    private IEnumerator DayTransitionSequence()
+    {
+        if (fadeImage != null)
+        {
+            fadeImage.gameObject.SetActive(true);
+            fadeImage.raycastTarget = true;
+
+            float elapsed = 0f;
+            while (elapsed < fadeDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                Color c = fadeImage.color;
+                c.a = Mathf.Clamp01(elapsed / fadeDuration);
+                fadeImage.color = c;
+                yield return null;
+            }
+
+            Color finalC = fadeImage.color;
+            finalC.a = 1f;
+            fadeImage.color = finalC;
+        }
+
+        CurrentDay++;
+        SetTime(TimeOfDay.Morning);
+
+        OnDayChanged?.Invoke(CurrentDay);
+        Debug.Log($"New day started: Day {CurrentDay}");
+
+        yield return null;
+        yield return new WaitUntil(() => Time.timeScale > 0f);
+
+        if (fadeImage != null)
+        {
+            float elapsed = 0f;
+            while (elapsed < fadeDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                Color c = fadeImage.color;
+                c.a = 1f - Mathf.Clamp01(elapsed / fadeDuration);
+                fadeImage.color = c;
+                yield return null;
+            }
+
+            Color finalC = fadeImage.color;
+            finalC.a = 0f;
+            fadeImage.color = finalC;
+            fadeImage.raycastTarget = false;
         }
     }
 }

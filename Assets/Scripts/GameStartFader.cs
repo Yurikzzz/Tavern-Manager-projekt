@@ -23,14 +23,11 @@ public class GameStartFader : MonoBehaviour
 
     IEnumerator FadeInRoutine()
     {
-        // 1. REVERTED: Now uses standard time. If the game is paused, this timer pauses too!
         yield return new WaitForSeconds(startDelay);
 
         float alpha = 1f;
         while (alpha > 0)
         {
-            // 2. REVERTED: Now uses Time.deltaTime. 
-            // If the game is paused (timeScale = 0), alpha stops changing.
             alpha -= Time.deltaTime * fadeSpeed;
 
             if (blackScreen != null)
