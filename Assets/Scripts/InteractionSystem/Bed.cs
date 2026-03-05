@@ -81,8 +81,5 @@ public class Bed : Interactable
     {
         Debug.Log("Player is sleeping...");
         GameTimeManager.Instance.NextDay();
-        SaveManager.instance.SaveGame();
-
-        Debug.Log("Player slept. It is now Day " + SaveManager.instance.currentData.dayNumber);
     }
 }

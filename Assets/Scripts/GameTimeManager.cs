@@ -149,6 +149,7 @@ public class GameTimeManager : MonoBehaviour
 
     private IEnumerator DayTransitionSequence()
     {
+        // 1. Fade to Black
         if (fadeImage != null)
         {
             fadeImage.gameObject.SetActive(true);
@@ -169,15 +170,25 @@ public class GameTimeManager : MonoBehaviour
             fadeImage.color = finalC;
         }
 
+        // 2. Do the actual day change logic (Behind the black screen!)
         CurrentDay++;
         SetTime(TimeOfDay.Morning);
+
+        // ---> NEW: SAVE THE GAME RIGHT HERE! <---
+        if (SaveManager.instance != null)
+        {
+            SaveManager.instance.SaveGame();
+        }
+        // ----------------------------------------
 
         OnDayChanged?.Invoke(CurrentDay);
         Debug.Log($"New day started: Day {CurrentDay}");
 
+        // 3. Wait for the player to clear all UI
         yield return null;
         yield return new WaitUntil(() => Time.timeScale > 0f);
 
+        // 4. Fade Black Screen Away
         if (fadeImage != null)
         {
             float elapsed = 0f;
