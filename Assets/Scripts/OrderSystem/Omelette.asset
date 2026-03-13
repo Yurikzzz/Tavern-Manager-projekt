@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Omelette
   icon: {fileID: 21300000, guid: 16dce5c4b17bc7c4ea81223f14f4edbc, type: 3}
+  tableSprite: {fileID: 21300000, guid: 7f04425ddd70d3949bf818f0589fb5d3, type: 3}
+  coinReward: 15
+  popularityReward: 5

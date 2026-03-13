@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Sandwich
   icon: {fileID: 21300000, guid: 0f2b06798b0ac014dabc6c1b5aef6b80, type: 3}
+  tableSprite: {fileID: 21300000, guid: 7f04425ddd70d3949bf818f0589fb5d3, type: 3}
+  coinReward: 15
+  popularityReward: 5

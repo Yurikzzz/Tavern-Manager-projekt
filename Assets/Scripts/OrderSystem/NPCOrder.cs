@@ -157,6 +157,12 @@ public class NPCOrder : MonoBehaviour
 
         HideDeliveryMarker();
 
+        // UPDATED: Show the plate using the dedicated table sprite
+        if (npcController != null)
+        {
+            npcController.SetPlate(dishFromPlayer.tableSprite, true);
+        }
+
         if (eatingRoutine == null)
             eatingRoutine = StartCoroutine(EatAndLeave());
 

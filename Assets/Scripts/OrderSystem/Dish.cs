@@ -5,6 +5,7 @@ public class Dish : ScriptableObject
 {
     public string displayName;
     public Sprite icon;
+    public Sprite tableSprite;
 
     [Header("Rewards")]
     public int coinReward = 15;

@@ -8,6 +8,7 @@ public class Table : MonoBehaviour
     {
         public Transform seatTransform;
         public bool faceLeft;
+        public SpriteRenderer plateRenderer;
     }
 
     public Seat[] seats;

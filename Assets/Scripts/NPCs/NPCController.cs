@@ -45,6 +45,15 @@ public class NPCController : MonoBehaviour
         }
     }
 
+    public void SetPlate(Sprite dishSprite, bool isVisible)
+    {
+        if (targetSeat != null && targetSeat.plateRenderer != null)
+        {
+            targetSeat.plateRenderer.sprite = dishSprite;
+            targetSeat.plateRenderer.enabled = isVisible;
+        }
+    }
+
     void Update()
     {
         if (isLeaving)
@@ -82,7 +91,6 @@ public class NPCController : MonoBehaviour
         Table[] tables = FindObjectsOfType<Table>();
         List<Table> availableTables = new List<Table>();
 
-        // 1. Gather all tables that have at least one free seat
         foreach (Table table in tables)
         {
             if (table.HasFreeSeat)
@@ -91,7 +99,6 @@ public class NPCController : MonoBehaviour
             }
         }
 
-        // 2. If we found any, pick one at random
         if (availableTables.Count > 0)
         {
             targetTable = availableTables[UnityEngine.Random.Range(0, availableTables.Count)];
@@ -146,6 +153,8 @@ public class NPCController : MonoBehaviour
 
         isLeaving = true;
         isSitting = false;
+
+        SetPlate(null, false);
 
         if (npcCollider != null)
             npcCollider.enabled = false;
