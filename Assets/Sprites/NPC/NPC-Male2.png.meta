@@ -1,31 +1,31 @@
 fileFormatVersion: 2
-guid: 360be5d77b42ca54d8b317b656165729
+guid: b01f6fbadd3fb3f4ba1fd48f4b1ddb41
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5142835864199192333
-    second: NPC-Male 1_0
+      213: 3289862369785791606
+    second: NPC-Male2_0
   - first:
-      213: -6773847766940134739
-    second: NPC-Male 1_1
+      213: -870394165989863106
+    second: NPC-Male2_1
   - first:
-      213: 1140139405076211857
-    second: NPC-Male 1_2
+      213: -4664493049915127131
+    second: NPC-Male2_2
   - first:
-      213: 1313299452724589470
-    second: NPC-Male 1_3
+      213: -5677864727579504545
+    second: NPC-Male2_3
   - first:
-      213: -750770554088274597
-    second: NPC-Male 1_4
+      213: 6010176615001819427
+    second: NPC-Male2_4
   - first:
-      213: 123112532210322940
-    second: NPC-Male 1_5
+      213: -6198288467516878604
+    second: NPC-Male2_5
   - first:
-      213: 8557363969510897473
-    second: NPC-Male 1_6
+      213: -1278755717468425084
+    second: NPC-Male2_6
   - first:
-      213: -5677945147115914281
-    second: NPC-Male 1_7
+      213: 127980089914217474
+    second: NPC-Male2_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -121,7 +121,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: NPC-Male 1_0
+      name: NPC-Male2_0
       rect:
         serializedVersion: 2
         x: 0
@@ -136,14 +136,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3f0a448870af0a8b0800000000000000
-      internalID: -5142835864199192333
+      spriteID: 674c1071560f7ad20800000000000000
+      internalID: 3289862369785791606
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NPC-Male 1_1
+      name: NPC-Male2_1
       rect:
         serializedVersion: 2
         x: 32
@@ -158,14 +158,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: da2d5f868557ef1a0800000000000000
-      internalID: -6773847766940134739
+      spriteID: e311a991e1dbbe3f0800000000000000
+      internalID: -870394165989863106
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NPC-Male 1_2
+      name: NPC-Male2_2
       rect:
         serializedVersion: 2
         x: 64
@@ -180,14 +180,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1982ef98fb692df00800000000000000
-      internalID: 1140139405076211857
+      spriteID: 5aac78ed844644fb0800000000000000
+      internalID: -4664493049915127131
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NPC-Male 1_3
+      name: NPC-Male2_3
       rect:
         serializedVersion: 2
         x: 96
@@ -202,14 +202,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e933d53e4e6c93210800000000000000
-      internalID: 1313299452724589470
+      spriteID: f5057e5ec1c2431b0800000000000000
+      internalID: -5677864727579504545
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NPC-Male 1_4
+      name: NPC-Male2_4
       rect:
         serializedVersion: 2
         x: 128
@@ -224,14 +224,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b55ceb7a82ab495f0800000000000000
-      internalID: -750770554088274597
+      spriteID: 3290b8eb9cf686350800000000000000
+      internalID: 6010176615001819427
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NPC-Male 1_5
+      name: NPC-Male2_5
       rect:
         serializedVersion: 2
         x: 160
@@ -246,14 +246,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cfd8bcd123265b100800000000000000
-      internalID: 123112532210322940
+      spriteID: 4f0914e8a714bf9a0800000000000000
+      internalID: -6198288467516878604
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NPC-Male 1_6
+      name: NPC-Male2_6
       rect:
         serializedVersion: 2
         x: 192
@@ -268,14 +268,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1477c60013dd1c670800000000000000
-      internalID: 8557363969510897473
+      spriteID: 4847bc93372f04ee0800000000000000
+      internalID: -1278755717468425084
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NPC-Male 1_7
+      name: NPC-Male2_7
       rect:
         serializedVersion: 2
         x: 224
@@ -290,8 +290,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7dbb004c8f2e331b0800000000000000
-      internalID: -5677945147115914281
+      spriteID: 204d8a5b63da6c100800000000000000
+      internalID: 127980089914217474
       vertices: []
       indices: 
       edges: []
@@ -300,7 +300,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 56cb34d4238cadb428421ed81af32234
+    spriteID: c2eafeff56c663c4ca832dfa1647b98b
     internalID: 0
     vertices: []
     indices: 
@@ -310,14 +310,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      NPC-Male 1_0: -5142835864199192333
-      NPC-Male 1_1: -6773847766940134739
-      NPC-Male 1_2: 1140139405076211857
-      NPC-Male 1_3: 1313299452724589470
-      NPC-Male 1_4: -750770554088274597
-      NPC-Male 1_5: 123112532210322940
-      NPC-Male 1_6: 8557363969510897473
-      NPC-Male 1_7: -5677945147115914281
+      NPC-Male2_0: 3289862369785791606
+      NPC-Male2_1: -870394165989863106
+      NPC-Male2_2: -4664493049915127131
+      NPC-Male2_3: -5677864727579504545
+      NPC-Male2_4: 6010176615001819427
+      NPC-Male2_5: -6198288467516878604
+      NPC-Male2_6: -1278755717468425084
+      NPC-Male2_7: 127980089914217474
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

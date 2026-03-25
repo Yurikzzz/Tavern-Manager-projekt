@@ -21,6 +21,7 @@ public class NPCController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Collider2D npcCollider;
     private int originalSortingOrder;
+    public AnimatorOverrideController[] npcSkins;
 
     void Start()
     {
@@ -29,6 +30,18 @@ public class NPCController : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         npcCollider = GetComponent<Collider2D>();
+
+        if (npcSkins != null && npcSkins.Length > 0)
+        {
+            int randomSkinIndex = UnityEngine.Random.Range(0, npcSkins.Length);
+            animator.runtimeAnimatorController = npcSkins[randomSkinIndex];
+
+            Debug.Log("Swapped skin to: " + npcSkins[randomSkinIndex].name);
+        }
+        else
+        {
+            Debug.LogWarning("NPC Skins array is empty or missing!");
+        }
 
         if (spriteRenderer != null) originalSortingOrder = spriteRenderer.sortingOrder;
 
