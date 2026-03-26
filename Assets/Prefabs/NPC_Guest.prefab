@@ -175,7 +175,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &2585740607762784420
@@ -264,6 +264,13 @@ MonoBehaviour:
   exitPosition: {fileID: 0}
   animator: {fileID: 0}
   sr: {fileID: 0}
+  guestSkins:
+  - {fileID: 22100000, guid: c1793de29b77ca144a7d4b080769411b, type: 2}
+  - {fileID: 22100000, guid: e06754982487fc94d89ed207f341c8a6, type: 2}
+  - {fileID: 22100000, guid: 26e3777efaf741140ad8baf98087913d, type: 2}
+  - {fileID: 22100000, guid: 8cc9df2f41aee9b499a9f53b6f76cd76, type: 2}
+  - {fileID: 22100000, guid: 8fc32d9d21fe08d41b1176fd6eafee16, type: 2}
+  - {fileID: 22100000, guid: 142ba8318e03c734aade67ac09dae3af, type: 2}
 --- !u!1 &7279015100118786468
 GameObject:
   m_ObjectHideFlags: 0

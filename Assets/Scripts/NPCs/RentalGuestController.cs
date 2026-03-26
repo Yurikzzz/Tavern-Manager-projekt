@@ -12,6 +12,7 @@ public class RentalGuestController : Interactable
     [Header("Animation")]
     public Animator animator;
     public SpriteRenderer sr;
+    public AnimatorOverrideController[] guestSkins;
     private string movingParam = "isWalking";
 
     private RoomManager assignedRoom;
@@ -32,6 +33,12 @@ public class RentalGuestController : Interactable
 
     void Start()
     {
+        if (guestSkins != null && guestSkins.Length > 0 && animator != null)
+        {
+            int randomSkinIndex = UnityEngine.Random.Range(0, guestSkins.Length);
+            animator.runtimeAnimatorController = guestSkins[randomSkinIndex];
+        }
+
         if (interactionCollider != null) interactionCollider.enabled = false;
         HidePrompt();
 

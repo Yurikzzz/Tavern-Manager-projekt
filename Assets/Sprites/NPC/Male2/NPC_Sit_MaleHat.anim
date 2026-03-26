@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: NPC_Idle2
+  m_Name: NPC_Sit_MaleHat
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,7 +21,7 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 6597887467586744903, guid: 17f29cbb2023e1849869b5608983a97b, type: 3}
+      value: {fileID: 127980089914217474, guid: b01f6fbadd3fb3f4ba1fd48f4b1ddb41, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -44,7 +44,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 6597887467586744903, guid: 17f29cbb2023e1849869b5608983a97b, type: 3}
+    - {fileID: 127980089914217474, guid: b01f6fbadd3fb3f4ba1fd48f4b1ddb41, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
