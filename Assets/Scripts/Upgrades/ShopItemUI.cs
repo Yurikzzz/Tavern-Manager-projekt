@@ -14,6 +14,7 @@ public class ShopItemUI : MonoBehaviour
 
     private UpgradeData myData;
 
+
     public void Initialize(UpgradeData data)
     {
         myData = data;
@@ -61,6 +62,10 @@ public class ShopItemUI : MonoBehaviour
         if (isOwned)
         {
             buyButton.interactable = false;
+            Color boughtColor;
+            ColorUtility.TryParseHtmlString("#B3B3B3", out boughtColor);
+            buyButton.image.color = boughtColor;
+            buttonText.color = boughtColor;
             buttonText.text = "Owned";
         }
         else
