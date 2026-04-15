@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,6 +28,13 @@ public class BarUIController : MonoBehaviour
 
     private readonly List<GameObject> spawnedOrderButtons = new List<GameObject>();
     private readonly List<DishButtonUI> dishButtons = new List<DishButtonUI>();
+
+    // Events for tutorial / external listeners
+    public event Action OnBarOpened;
+    public event Action OnBarClosed;
+    public event Action<Order> OnOrderSelected;
+    public event Action<Dish> OnDishSelected;
+    public event Action<Dish> OnDishConfirmed;
 
     void Start()
     {
@@ -78,6 +86,8 @@ public class BarUIController : MonoBehaviour
 
         RefreshOrdersList();
         RefreshDishGrid();
+
+        OnBarOpened?.Invoke();
     }
 
     public void Close()
@@ -87,6 +97,8 @@ public class BarUIController : MonoBehaviour
 
         barUIRoot.SetActive(false);
         isOpen = false;
+
+        OnBarClosed?.Invoke();
     }
 
     public void Toggle()
@@ -163,6 +175,9 @@ public class BarUIController : MonoBehaviour
             selectedOrder = selectedOrderButton.Order;
 
             Debug.Log($"BarUI: Selected order for {selectedOrder.customer.gameObject.name}");
+
+            // Notify subscribers that an order was selected
+            OnOrderSelected?.Invoke(selectedOrder);
         }
         else
         {
@@ -210,6 +225,9 @@ public class BarUIController : MonoBehaviour
         {
             selectedDishButton.SetSelected(true);
             Debug.Log($"BarUI: Selected dish {selectedDishButton.Dish.displayName}");
+
+            // Notify subscribers a dish was selected
+            OnDishSelected?.Invoke(selectedDishButton.Dish);
         }
     }
 
@@ -247,6 +265,9 @@ public class BarUIController : MonoBehaviour
         {
             selectedOrder.customer.ShowDeliveryMarker();
         }
+
+        // Notify subscribers that the dish was prepared/confirmed
+        OnDishConfirmed?.Invoke(chosenDish);
 
         Close();
     }

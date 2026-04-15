@@ -37,11 +37,13 @@ public class TavernDoor : Interactable
         if (confirmButton != null)
         {
             confirmButton.onClick.AddListener(ConfirmAction);
+            confirmButton.interactable = true;
         }
 
         if (cancelButton != null)
         {
             cancelButton.onClick.AddListener(CancelAction);
+            cancelButton.interactable = true;
         }
     }
 
@@ -104,7 +106,15 @@ public class TavernDoor : Interactable
         switch (timeManager.CurrentTime)
         {
             case GameTimeManager.TimeOfDay.Morning:
-                ShowConfirmation(PendingAction.Open);
+                // Prevent opening if any rental rooms are dirty
+                if (!AreAllRoomsClean())
+                {
+                    ShowCannotOpen("You must clean all rental rooms before opening the tavern.");
+                }
+                else
+                {
+                    ShowConfirmation(PendingAction.Open);
+                }
                 break;
 
             case GameTimeManager.TimeOfDay.Afternoon:
@@ -115,6 +125,33 @@ public class TavernDoor : Interactable
                 Debug.Log("You can only open in the morning or close in the evening.");
                 break;
         }
+    }
+
+    private bool AreAllRoomsClean()
+    {
+        var rooms = FindObjectsOfType<RoomManager>();
+        if (rooms == null || rooms.Length == 0) return true;
+        foreach (var r in rooms)
+        {
+            if (!r.isClean) return false;
+        }
+        return true;
+    }
+
+    private void ShowCannotOpen(string message)
+    {
+        if (confirmationPanel == null || confirmationLabel == null)
+        {
+            Debug.LogWarning("Confirmation UI has not been assigned on the TavernDoor.");
+            return;
+        }
+
+        pendingAction = PendingAction.None;
+        confirmationPanel.SetActive(true);
+        confirmationLabel.text = message;
+
+        if (confirmButton != null) confirmButton.interactable = false;
+        if (cancelButton != null) cancelButton.interactable = true;
     }
 
     private void ShowConfirmation(PendingAction action)
@@ -130,6 +167,9 @@ public class TavernDoor : Interactable
         confirmationLabel.text = action == PendingAction.Open
             ? "Are you sure you want to open the tavern?"
             : "Are you sure you want to close the tavern?";
+
+        if (confirmButton != null) confirmButton.interactable = true;
+        if (cancelButton != null) cancelButton.interactable = true;
     }
 
     private void ConfirmAction()
@@ -174,6 +214,9 @@ public class TavernDoor : Interactable
         {
             confirmationPanel.SetActive(false);
         }
+
+        if (confirmButton != null) confirmButton.interactable = true;
+        if (cancelButton != null) cancelButton.interactable = true;
     }
 
     private void OpenTavern()
