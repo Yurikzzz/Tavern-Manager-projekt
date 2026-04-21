@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI; // Added this to access the Image component
+using UnityEngine.UI;
 using System;
 using System.Collections;
 
@@ -7,12 +7,15 @@ public class GameTimeManager : MonoBehaviour
 {
     public static GameTimeManager Instance;
 
-    [Header("Backgrounds")]
-    public Sprite DayBackground;
-    public Sprite NightBackground;
+    [Header("Background Animations")]
+    [Tooltip("The Animator component on your Background object")]
+    public Animator backgroundAnimator;
 
-    [Header("Renderer")]
-    public SpriteRenderer backgroundRenderer;
+    [Tooltip("Exact name of the Day animation state in the Animator")]
+    public string dayAnimationState = "Background_Day";
+
+    [Tooltip("Exact name of the Night animation state in the Animator")]
+    public string nightAnimationState = "Background_Night";
 
     [Header("Time Settings")]
     [Tooltip("How long the tavern stays open (in seconds) before automatically closing.")]
@@ -47,14 +50,14 @@ public class GameTimeManager : MonoBehaviour
     {
         Instance = this;
 
-        if (backgroundRenderer == null)
-            backgroundRenderer = GetComponent<SpriteRenderer>();
-        if (backgroundRenderer == null)
-            backgroundRenderer = GetComponentInChildren<SpriteRenderer>();
+        // Try to find the animator if one wasn't assigned in the inspector
+        if (backgroundAnimator == null)
+            backgroundAnimator = GetComponent<Animator>();
+        if (backgroundAnimator == null)
+            backgroundAnimator = GetComponentInChildren<Animator>();
 
-        if (backgroundRenderer == null)
-            Debug.LogWarning("GameTimeManager: No SpriteRenderer assigned.");
-
+        if (backgroundAnimator == null)
+            Debug.LogWarning("GameTimeManager: No Animator assigned for the background.");
 
         ApplyBackgroundForTime(CurrentTime);
     }
@@ -92,7 +95,6 @@ public class GameTimeManager : MonoBehaviour
         }
 
         CurrentTime = newTime;
-
         afternoonTimerElapsed = 0f;
 
         if (CurrentTime == TimeOfDay.Afternoon)
@@ -119,18 +121,17 @@ public class GameTimeManager : MonoBehaviour
 
     void ApplyBackgroundForTime(TimeOfDay time)
     {
-        if (backgroundRenderer == null) return;
+        if (backgroundAnimator == null) return;
 
+        // Play the correct animation based on the time of day
         switch (time)
         {
             case TimeOfDay.Morning:
-                if (DayBackground != null) backgroundRenderer.sprite = DayBackground;
-                break;
             case TimeOfDay.Afternoon:
-                if (DayBackground != null) backgroundRenderer.sprite = DayBackground;
+                backgroundAnimator.Play(dayAnimationState);
                 break;
             case TimeOfDay.Night:
-                if (NightBackground != null) backgroundRenderer.sprite = NightBackground;
+                backgroundAnimator.Play(nightAnimationState);
                 break;
         }
     }
@@ -149,7 +150,6 @@ public class GameTimeManager : MonoBehaviour
 
     private IEnumerator DayTransitionSequence()
     {
-        // 1. Fade to Black
         if (fadeImage != null)
         {
             fadeImage.gameObject.SetActive(true);
@@ -170,25 +170,20 @@ public class GameTimeManager : MonoBehaviour
             fadeImage.color = finalC;
         }
 
-        // 2. Do the actual day change logic (Behind the black screen!)
         CurrentDay++;
         SetTime(TimeOfDay.Morning);
 
-        // ---> NEW: SAVE THE GAME RIGHT HERE! <---
         if (SaveManager.instance != null)
         {
             SaveManager.instance.SaveGame();
         }
-        // ----------------------------------------
 
         OnDayChanged?.Invoke(CurrentDay);
         Debug.Log($"New day started: Day {CurrentDay}");
 
-        // 3. Wait for the player to clear all UI
         yield return null;
         yield return new WaitUntil(() => Time.timeScale > 0f);
 
-        // 4. Fade Black Screen Away
         if (fadeImage != null)
         {
             float elapsed = 0f;
