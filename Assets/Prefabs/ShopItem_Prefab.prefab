@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2156979635496044069}
   - component: {fileID: 8949734905519221171}
   - component: {fileID: 875920766443851845}
+  - component: {fileID: 3863662055930335431}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -134,8 +135,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dbae55641346df4bb2b095bb843337a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textToMove: {fileID: 11895066755386759}
   shiftAmount: 4
+--- !u!114 &3863662055930335431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940453229127006643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd97ee7f365a1e54c9db0404cf71fa52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mySound: {fileID: 8300000, guid: 7eec9a5bf3dea2241adab1f553eb0e61, type: 3}
 --- !u!1 &1376590982737795638
 GameObject:
   m_ObjectHideFlags: 0
