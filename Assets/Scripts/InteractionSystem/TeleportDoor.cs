@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(AudioSource))] // Automatically adds an AudioSource
 public class TeleportDoor : Interactable
 {
     [Header("Destinations")]
@@ -16,13 +17,18 @@ public class TeleportDoor : Interactable
     public Image blackScreenImage;
     public float fadeDuration = 0.5f;
 
+    [Header("Audio")]
+    public AudioClip interactSound; // The single sound effect for teleporting
+
     private static bool isGlobalTransitionActive = false;
 
     private Collider2D doorCollider;
+    private AudioSource audioSource; // Reference to our audio source
 
     private void Awake()
     {
         doorCollider = GetComponent<Collider2D>();
+        audioSource = GetComponent<AudioSource>(); // Grab the Audio Source
     }
 
     public void SetLocked(bool isLocked)
@@ -32,10 +38,16 @@ public class TeleportDoor : Interactable
 
     public override void Interact()
     {
+        // Don't play the sound or teleport if we are already transitioning
         if (isGlobalTransitionActive) return;
 
-        isGlobalTransitionActive = true;
+        // Play the teleport sound right as the interaction starts!
+        if (interactSound != null)
+        {
+            audioSource.PlayOneShot(interactSound);
+        }
 
+        isGlobalTransitionActive = true;
         StartCoroutine(TeleportRoutine());
     }
 

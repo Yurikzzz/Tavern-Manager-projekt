@@ -3,10 +3,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[RequireComponent(typeof(AudioSource))] // Automatically adds an AudioSource
 public class TavernDoor : Interactable
 {
     [SerializeField] private Sprite closedSprite;
     [SerializeField] private Sprite openSprite;
+
     [Header("Confirmation UI")]
     [SerializeField] private GameObject confirmationPanel;
     [SerializeField] private TextMeshProUGUI confirmationLabel;
@@ -16,7 +18,12 @@ public class TavernDoor : Interactable
     [Header("Auto-open settings")]
     [SerializeField] private float openDuration = 1f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip openSound;
+    [SerializeField] private AudioClip closeSound;
+
     private SpriteRenderer spriteRenderer;
+    private AudioSource audioSource; // Reference to our audio source
     private bool isOpen = false;
     private enum PendingAction { None, Open, Close }
     private PendingAction pendingAction = PendingAction.None;
@@ -26,6 +33,8 @@ public class TavernDoor : Interactable
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>(); // Grab the Audio Source
+
         spriteRenderer.sprite = closedSprite;
         spriteRenderer.flipX = false;
 
@@ -83,10 +92,16 @@ public class TavernDoor : Interactable
 
     private IEnumerator ShowOpenSpriteTemporarily(float seconds)
     {
+        // Play sound when the door physically swings open for an NPC
+        if (openSound != null) audioSource.PlayOneShot(openSound);
+
         spriteRenderer.sprite = openSprite;
         spriteRenderer.flipX = true;
 
         yield return new WaitForSeconds(seconds);
+
+        // Play sound when the door physically swings closed behind an NPC
+        if (closeSound != null) audioSource.PlayOneShot(closeSound);
 
         spriteRenderer.sprite = closedSprite;
         spriteRenderer.flipX = false;
@@ -223,6 +238,10 @@ public class TavernDoor : Interactable
     {
         if (isOpen) return;
         isOpen = true;
+
+        // Play sound when you successfully open the tavern for the day
+        if (openSound != null) audioSource.PlayOneShot(openSound);
+
         Debug.Log("The tavern is now open for business!");
     }
 
@@ -230,6 +249,10 @@ public class TavernDoor : Interactable
     {
         if (!isOpen) return;
         isOpen = false;
+
+        // Play sound when you successfully close the tavern
+        if (closeSound != null) audioSource.PlayOneShot(closeSound);
+
         Debug.Log("The tavern is now closed for the night!");
     }
 }

@@ -19,6 +19,10 @@ public class BarUIController : MonoBehaviour
     [Header("References")]
     public PlayerCarry playerCarry;
 
+    [Header("Audio")]
+    public AudioClip openSound;
+    public AudioClip closeSound;
+
     private bool isOpen = false;
 
     private Order selectedOrder;
@@ -84,6 +88,12 @@ public class BarUIController : MonoBehaviour
         barUIRoot.SetActive(true);
         isOpen = true;
 
+        // Play the Open Sound!
+        if (openSound != null && SFXManager.instance != null)
+        {
+            SFXManager.instance.PlaySound(openSound);
+        }
+
         RefreshOrdersList();
         RefreshDishGrid();
 
@@ -97,6 +107,12 @@ public class BarUIController : MonoBehaviour
 
         barUIRoot.SetActive(false);
         isOpen = false;
+
+        // Play the Close Sound!
+        if (closeSound != null && SFXManager.instance != null)
+        {
+            SFXManager.instance.PlaySound(closeSound);
+        }
 
         OnBarClosed?.Invoke();
     }
