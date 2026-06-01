@@ -7,15 +7,15 @@ public class GameTimeManager : MonoBehaviour
 {
     public static GameTimeManager Instance;
 
-    [Header("Background Animations")]
-    [Tooltip("The Animator component on your Background object")]
-    public Animator backgroundAnimator;
+    [Header("Background Visuals")]
+    [Tooltip("The SpriteRenderer component on your Background object")]
+    public SpriteRenderer backgroundSpriteRenderer;
 
-    [Tooltip("Exact name of the Day animation state in the Animator")]
-    public string dayAnimationState = "Background_Day";
+    [Tooltip("The sprite to show during Morning and Afternoon")]
+    public Sprite daySprite;
 
-    [Tooltip("Exact name of the Night animation state in the Animator")]
-    public string nightAnimationState = "Background_Night";
+    [Tooltip("The sprite to show during Night")]
+    public Sprite nightSprite;
 
     [Header("Time Settings")]
     [Tooltip("How long the tavern stays open (in seconds) before automatically closing.")]
@@ -50,14 +50,13 @@ public class GameTimeManager : MonoBehaviour
     {
         Instance = this;
 
-        // Try to find the animator if one wasn't assigned in the inspector
-        if (backgroundAnimator == null)
-            backgroundAnimator = GetComponent<Animator>();
-        if (backgroundAnimator == null)
-            backgroundAnimator = GetComponentInChildren<Animator>();
+        if (backgroundSpriteRenderer == null)
+            backgroundSpriteRenderer = GetComponent<SpriteRenderer>();
+        if (backgroundSpriteRenderer == null)
+            backgroundSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
-        if (backgroundAnimator == null)
-            Debug.LogWarning("GameTimeManager: No Animator assigned for the background.");
+        if (backgroundSpriteRenderer == null)
+            Debug.LogWarning("GameTimeManager: No SpriteRenderer assigned for the background.");
 
         ApplyBackgroundForTime(CurrentTime);
     }
@@ -121,17 +120,16 @@ public class GameTimeManager : MonoBehaviour
 
     void ApplyBackgroundForTime(TimeOfDay time)
     {
-        if (backgroundAnimator == null) return;
+        if (backgroundSpriteRenderer == null) return;
 
-        // Play the correct animation based on the time of day
         switch (time)
         {
             case TimeOfDay.Morning:
             case TimeOfDay.Afternoon:
-                backgroundAnimator.Play(dayAnimationState);
+                if (daySprite != null) backgroundSpriteRenderer.sprite = daySprite;
                 break;
             case TimeOfDay.Night:
-                backgroundAnimator.Play(nightAnimationState);
+                if (nightSprite != null) backgroundSpriteRenderer.sprite = nightSprite;
                 break;
         }
     }

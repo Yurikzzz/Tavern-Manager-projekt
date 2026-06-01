@@ -6,7 +6,10 @@ public class CleaningTask : Interactable
 
     [Header("Task Settings")]
     public TaskType type;
-    public RoomManager myRoom; 
+    public RoomManager myRoom;
+
+    [Header("Audio")]
+    public AudioClip interactSound; // Added variable for your sound effect
 
     [Header("Visuals (For Beds Only)")]
     public Sprite cleanSprite;
@@ -22,10 +25,16 @@ public class CleaningTask : Interactable
 
     public override void Interact()
     {
+        // 1. Play the sound before doing anything else
+        if (interactSound != null)
+        {
+            // PlayClipAtPoint prevents the audio from cutting off when the object is disabled
+            AudioSource.PlayClipAtPoint(interactSound, transform.position);
+        }
+
         if (type == TaskType.Bed)
         {
             if (sr != null && cleanSprite != null) sr.sprite = cleanSprite;
-
             if (myCollider != null) myCollider.enabled = false;
         }
         else
