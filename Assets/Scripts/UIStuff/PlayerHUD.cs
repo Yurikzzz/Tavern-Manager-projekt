@@ -117,7 +117,16 @@ public class PlayerHUD : MonoBehaviour
 
     void UpdatePopularity(int amount)
     {
-        if (popularityText != null)
+        if (popularityText == null)
+            return;
+
+        int target = 0;
+        if (GameGoalManager.Instance != null)
+            target = GameGoalManager.Instance.targetPopularity;
+
+        if (target > 0)
+            popularityText.text = $"{amount}/{target}";
+        else
             popularityText.text = amount.ToString();
     }
 }

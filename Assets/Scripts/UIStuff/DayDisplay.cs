@@ -30,7 +30,16 @@ public class DayDisplay : MonoBehaviour
 
     private void UpdateDay(int day)
     {
-        if (dayText != null)
+        if (dayText == null)
+            return;
+
+        int totalDays = 0;
+        if (GameGoalManager.Instance != null)
+            totalDays = GameGoalManager.Instance.targetDays;
+
+        if (totalDays > 0)
+            dayText.text = $"Day {day}/{totalDays}";
+        else
             dayText.text = $"Day {day}";
     }
 
