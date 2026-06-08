@@ -8,4 +8,6 @@ public class GameData
     public int dayNumber = 1;
 
     public List<string> boughtUpgrades = new List<string>();
+
+    public bool tutorialCompleted = false;
 }

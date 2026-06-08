@@ -157,6 +157,17 @@ public class TutorialManager : MonoBehaviour
         timeManager.OnTimeChanged += OnTimeChanged;
         timeManager.OnDayChanged += OnDayChanged;
 
+        if (SaveManager.instance != null && SaveManager.instance.currentData != null && SaveManager.instance.currentData.tutorialCompleted)
+        {
+            current = Step.Finished;
+            HidePopup();
+
+            timeManager.OnTimeChanged -= OnTimeChanged;
+            timeManager.OnDayChanged -= OnDayChanged;
+            enabled = false;
+            yield break;
+        }
+
         barUI = FindObjectOfType<BarUIController>();
         TrySubscribeBarEvents();
 
@@ -210,6 +221,9 @@ public class TutorialManager : MonoBehaviour
 
     private void HandleDishConfirmed(Dish dish)
     {
+        if (current != Step.ChooseDish)
+            return;
+
         previousActiveOrders = OrderManager.Instance != null ? OrderManager.Instance.ActiveOrders.Count : 0;
         SetStep(Step.FirstServed, "Dish prepared. Deliver it to the customer. Serve the first customer to continue.");
     }
@@ -248,6 +262,12 @@ public class TutorialManager : MonoBehaviour
                 barUI.OnDishSelected -= HandleDishSelected;
                 barUI.OnDishConfirmed -= HandleDishConfirmed;
                 barEventsSubscribed = false;
+            }
+
+            if (SaveManager.instance != null && SaveManager.instance.currentData != null)
+            {
+                SaveManager.instance.currentData.tutorialCompleted = true;
+                SaveManager.instance.SaveGame();
             }
 
             enabled = false;
@@ -408,7 +428,6 @@ public class TutorialManager : MonoBehaviour
         bool isOffScreenX = viewportPos.x < 0f || viewportPos.x > 1f;
         bool isOffScreenY = viewportPos.y < 0f || viewportPos.y > 1f;
 
-        // Je mimo obrazovku a off-screen mód je zapnutý
         if ((isOffScreenX || isOffScreenY) && cfg.showOffScreen)
         {
             cfg.arrowObject.SetActive(true);
@@ -449,20 +468,16 @@ public class TutorialManager : MonoBehaviour
             Vector3 newWorldPos = cam.ViewportToWorldPoint(new Vector3(targetX, targetY, viewportPos.z));
             newWorldPos.z = cfg.originalPos.z;
 
-            // Žádný float efekt pro off-screen
             cfg.arrowObject.transform.position = newWorldPos;
             cfg.arrowObject.transform.rotation = Quaternion.Euler(0, 0, zRotation);
         }
-        // Je normálně na obrazovce
         else if (!isOffScreenX && !isOffScreenY)
         {
             cfg.arrowObject.SetActive(true);
 
-            // Vypočítáme float posun podle času
             float floatOffset = Mathf.Sin(Time.time * floatSpeed) * floatAmplitude;
             Vector3 newPos = cfg.originalPos;
 
-            // Zjistíme, po které ose se má šipka houpat
             if (cfg.floatDir == FloatDirection.Vertical)
             {
                 newPos.y += floatOffset;

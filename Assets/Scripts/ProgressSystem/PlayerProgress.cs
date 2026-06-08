@@ -18,6 +18,11 @@ public class PlayerProgress : MonoBehaviour
 
     void Start()
     {
+        LoadFromSaveData();
+    }
+
+    public void LoadFromSaveData()
+    {
         if (SaveManager.instance != null)
         {
             Coins = SaveManager.instance.currentData.coins;

@@ -63,6 +63,11 @@ public class SaveManager : MonoBehaviour
             currentData = new GameData();
             Debug.Log("No save file found. Starting fresh.");
         }
+
+        if (PlayerProgress.Instance != null)
+        {
+            PlayerProgress.Instance.LoadFromSaveData();
+        }
     }
 
     public void StartNewGame()

@@ -171,15 +171,17 @@ public class GameTimeManager : MonoBehaviour
         CurrentDay++;
         SetTime(TimeOfDay.Morning);
 
+        OnDayChanged?.Invoke(CurrentDay);
+        Debug.Log($"New day started: Day {CurrentDay}");
+
+        // Wait for DailyRewardManager to process rewards before saving
+        yield return null;
+
         if (SaveManager.instance != null)
         {
             SaveManager.instance.SaveGame();
         }
 
-        OnDayChanged?.Invoke(CurrentDay);
-        Debug.Log($"New day started: Day {CurrentDay}");
-
-        yield return null;
         yield return new WaitUntil(() => Time.timeScale > 0f);
 
         if (fadeImage != null)
