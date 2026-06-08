@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +7,8 @@ using TMPro;
 public class TutorialManager : MonoBehaviour
 {
     public static TutorialManager Instance { get; private set; }
+
+    public enum FloatDirection { Vertical, Horizontal }
 
     [Header("UI")]
     public GameObject popupRoot;
@@ -20,29 +22,32 @@ public class TutorialManager : MonoBehaviour
     [Tooltip("Popup position while the bar menu is open.")]
     public Transform barOpenAnchor;
 
-    // Arrow guidance configuration - now spawns world objects at anchors and falls back to off-screen placement
     [System.Serializable]
     public class ArrowConfig
     {
-        public Step step;                      // Which tutorial step this config applies to
-        public Transform anchor;               // World / UI empty assigned in inspector
-        [Tooltip("Prefab spawned directly at the anchor. Should be a small world object with SpriteRenderer or MeshRenderer.")]
-        public GameObject worldArrowPrefab;    // Prefab instantiated at anchor when on-screen
-        [Tooltip("Prefab spawned near the camera edge when anchor is off-screen (optional). If null, worldArrowPrefab will be moved to edge position.")]
-        public GameObject offscreenArrowPrefab; // Prefab instantiated at screen edge in world space
-        public Vector3 worldOffset = Vector3.up * 0.5f; // offset from anchor when placing world arrow
-        [Tooltip("Distance from camera for off-screen arrow placement (world units).")]
-        public float offscreenDistance = 5f;
-        [Tooltip("Viewport margin when calculating off-screen edge (0..0.5)")]
-        public float offscreenViewportMargin = 0.05f;
+        public Step step;
+        public GameObject arrowObject;
+
+        [Header("Off-screen Settings")]
+        [Tooltip("Zapnout/vypnout zobrazení šipky na okraji obrazovky, když se kamera nedívá.")]
+        public bool showOffScreen = true;
+
+        [Header("Animation Override")]
+        [Tooltip("Určuje osu, po které se šipka vznáší.")]
+        public FloatDirection floatDir = FloatDirection.Vertical;
+
+        [HideInInspector] public Vector3 originalPos;
+        [HideInInspector] public Quaternion originalRot;
     }
 
     [Header("Arrow Guidance")]
-    [Tooltip("Assign arrow configs for tutorial steps. The system will spawn small world objects at anchors or near camera edge if off-screen.")]
     public List<ArrowConfig> arrowConfigs = new List<ArrowConfig>();
 
-    [Tooltip("Scale applied to the world arrow instances (optional).")]
-    public Vector3 arrowDefaultScale = new Vector3(1f, 1f, 1f);
+    [Header("Global Animation Settings")]
+    [Tooltip("Rychlost vznášení šipky na obrazovce.")]
+    public float floatSpeed = 3f;
+    [Tooltip("Jak moc se má šipka vznášet.")]
+    public float floatAmplitude = 0.15f;
 
     private GameTimeManager timeManager;
     private OrderManager orderManager;
@@ -72,13 +77,7 @@ public class TutorialManager : MonoBehaviour
 
     private int initialRoomCount = 0;
     private int previousActiveOrders = 0;
-    private bool deliveryMarkerShown = false;
-
     private bool barEventsSubscribed = false;
-
-    // runtime spawned arrow instances (per step)
-    private readonly Dictionary<Step, GameObject> spawnedWorldArrows = new Dictionary<Step, GameObject>();
-    private readonly Dictionary<Step, GameObject> spawnedOffscreenArrows = new Dictionary<Step, GameObject>();
 
     private void Awake()
     {
@@ -110,6 +109,16 @@ public class TutorialManager : MonoBehaviour
             }
         }
 
+        foreach (var config in arrowConfigs)
+        {
+            if (config.arrowObject != null)
+            {
+                config.originalPos = config.arrowObject.transform.position;
+                config.originalRot = config.arrowObject.transform.rotation;
+                config.arrowObject.SetActive(false);
+            }
+        }
+
         StartCoroutine(InitializeNextFrame());
     }
 
@@ -135,12 +144,6 @@ public class TutorialManager : MonoBehaviour
         }
 
         if (Instance == this) Instance = null;
-
-        // Clean up spawned arrows
-        foreach (var kv in spawnedWorldArrows) if (kv.Value != null) Destroy(kv.Value);
-        spawnedWorldArrows.Clear();
-        foreach (var kv in spawnedOffscreenArrows) if (kv.Value != null) Destroy(kv.Value);
-        spawnedOffscreenArrows.Clear();
     }
 
     private IEnumerator InitializeNextFrame()
@@ -337,7 +340,6 @@ public class TutorialManager : MonoBehaviour
             HidePopup();
         else
             ShowPopup(message);
-        // when step changes we refresh arrows immediately
         UpdateArrow();
     }
 
@@ -386,118 +388,92 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // --- ARROW: spawn world objects at anchor; when anchor off-screen place arrow near camera edge in world space ---
     private void UpdateArrow()
     {
-        // find config for current step
-        ArrowConfig cfg = arrowConfigs.Find(a => a.step == current);
-
-        // hide any arrows for other steps
-        foreach (var kv in new List<Step>(spawnedWorldArrows.Keys))
-            if (kv != current && spawnedWorldArrows[kv] != null) { Destroy(spawnedWorldArrows[kv]); spawnedWorldArrows.Remove(kv); }
-        foreach (var kv in new List<Step>(spawnedOffscreenArrows.Keys))
-            if (kv != current && spawnedOffscreenArrows[kv] != null) { Destroy(spawnedOffscreenArrows[kv]); spawnedOffscreenArrows.Remove(kv); }
-
-        if (cfg == null || cfg.anchor == null || cfg.worldArrowPrefab == null)
+        foreach (var config in arrowConfigs)
         {
-            // nothing to show
-            return;
+            if (config.arrowObject != null)
+                config.arrowObject.SetActive(false);
         }
+
+        ArrowConfig cfg = arrowConfigs.Find(a => a.step == current);
+        if (cfg == null || cfg.arrowObject == null)
+            return;
 
         Camera cam = Camera.main;
         if (cam == null) return;
 
-        Vector3 anchorPos = cfg.anchor.position;
-        Vector3 viewport = cam.WorldToViewportPoint(anchorPos);
-        bool inFront = viewport.z > 0f;
-        bool onScreen = inFront && viewport.x >= 0f && viewport.x <= 1f && viewport.y >= 0f && viewport.y <= 1f;
+        Vector3 viewportPos = cam.WorldToViewportPoint(cfg.originalPos);
 
-        if (onScreen)
+        bool isOffScreenX = viewportPos.x < 0f || viewportPos.x > 1f;
+        bool isOffScreenY = viewportPos.y < 0f || viewportPos.y > 1f;
+
+        // Je mimo obrazovku a off-screen mód je zapnutý
+        if ((isOffScreenX || isOffScreenY) && cfg.showOffScreen)
         {
-            // ensure offscreen arrow removed
-            if (spawnedOffscreenArrows.TryGetValue(cfg.step, out var off))
+            cfg.arrowObject.SetActive(true);
+
+            float targetX = Mathf.Clamp(viewportPos.x, 0.05f, 0.95f);
+            float targetY = Mathf.Clamp(viewportPos.y, 0.05f, 0.95f);
+            float zRotation = 0f;
+
+            if (isOffScreenX)
             {
-                if (off != null) Destroy(off);
-                spawnedOffscreenArrows.Remove(cfg.step);
+                targetY = 0.5f;
+                if (viewportPos.x < 0f)
+                {
+                    targetX = 0.05f;
+                    zRotation = -90f;
+                }
+                else
+                {
+                    targetX = 0.95f;
+                    zRotation = 90f;
+                }
+            }
+            else if (isOffScreenY)
+            {
+                targetX = 0.5f;
+                if (viewportPos.y < 0f)
+                {
+                    targetY = 0.05f;
+                    zRotation = 0f;
+                }
+                else
+                {
+                    targetY = 0.95f;
+                    zRotation = 180f;
+                }
             }
 
-            // spawn or move world arrow to anchor + offset
-            if (!spawnedWorldArrows.TryGetValue(cfg.step, out var go) || go == null)
-            {
-                var inst = Instantiate(cfg.worldArrowPrefab, cfg.anchor.position + cfg.worldOffset, Quaternion.identity);
-                inst.transform.localScale = arrowDefaultScale;
-                spawnedWorldArrows[cfg.step] = inst;
-            }
-            else
-            {
-                go.transform.position = cfg.anchor.position + cfg.worldOffset;
-                go.transform.localScale = arrowDefaultScale;
-            }
+            Vector3 newWorldPos = cam.ViewportToWorldPoint(new Vector3(targetX, targetY, viewportPos.z));
+            newWorldPos.z = cfg.originalPos.z;
 
-            // billboard to camera if possible
-            if (spawnedWorldArrows[cfg.step] != null)
-            {
-                spawnedWorldArrows[cfg.step].transform.LookAt(cam.transform);
-                // keep arrow upright: zero X/Z rotation if sprite needs it
-                Vector3 e = spawnedWorldArrows[cfg.step].transform.eulerAngles;
-                spawnedWorldArrows[cfg.step].transform.eulerAngles = new Vector3(0f, e.y, 0f);
-            }
+            // Žádný float efekt pro off-screen
+            cfg.arrowObject.transform.position = newWorldPos;
+            cfg.arrowObject.transform.rotation = Quaternion.Euler(0, 0, zRotation);
         }
-        else
+        // Je normálně na obrazovce
+        else if (!isOffScreenX && !isOffScreenY)
         {
-            // anchor off-screen -> remove world arrow if created (we will show edge arrow)
-            if (spawnedWorldArrows.TryGetValue(cfg.step, out var existingWorld) && existingWorld != null)
+            cfg.arrowObject.SetActive(true);
+
+            // Vypočítáme float posun podle času
+            float floatOffset = Mathf.Sin(Time.time * floatSpeed) * floatAmplitude;
+            Vector3 newPos = cfg.originalPos;
+
+            // Zjistíme, po které ose se má šipka houpat
+            if (cfg.floatDir == FloatDirection.Vertical)
             {
-                Destroy(existingWorld);
-                spawnedWorldArrows.Remove(cfg.step);
-            }
-
-            // compute clamped viewport position (Y clamp used to set vertical)
-            float margin = Mathf.Clamp01(cfg.offscreenViewportMargin);
-            float clampedY = Mathf.Clamp(viewport.y, margin, 1f - margin);
-            bool placeLeft = (viewport.x < 0.5f);
-
-            // compute screen coordinates at left/right edge
-            float screenX = (placeLeft ? (Screen.width * margin) : (Screen.width * (1f - margin)));
-            float screenY = clampedY * Screen.height;
-
-            // compute world position at specified distance from camera
-            float distance = Mathf.Max(2f, Vector3.Distance(cam.transform.position, cfg.anchor.position));
-            distance = Mathf.Max(distance, cfg.offscreenDistance);
-            Vector3 screenPoint = new Vector3(screenX, screenY, distance);
-            Vector3 worldPos = cam.ScreenToWorldPoint(screenPoint);
-
-            // spawn or move offscreen arrow prefab (or spawn worldArrowPrefab if offscreen prefab not assigned)
-            GameObject prefabToUse = cfg.offscreenArrowPrefab != null ? cfg.offscreenArrowPrefab : cfg.worldArrowPrefab;
-            if (!spawnedOffscreenArrows.TryGetValue(cfg.step, out var offGo) || offGo == null)
-            {
-                var inst = Instantiate(prefabToUse, worldPos, Quaternion.identity);
-                inst.transform.localScale = arrowDefaultScale;
-                spawnedOffscreenArrows[cfg.step] = inst;
+                newPos.y += floatOffset;
             }
             else
             {
-                offGo.transform.position = worldPos;
-                offGo.transform.localScale = arrowDefaultScale;
+                newPos.x += floatOffset;
             }
 
-            // orient offscreen arrow: face camera and rotate sprite to point inward based on camera vs anchor X position
-            var arrowObj = spawnedOffscreenArrows[cfg.step];
-            if (arrowObj != null)
-            {
-                // face the camera
-                // use camera forward inverted so sprite faces camera normal
-                Quaternion faceCam = Quaternion.LookRotation(-cam.transform.forward, Vector3.up);
-
-                // decide horizontal pointing direction using camera (player) X vs anchor X
-                bool playerLeftOfAnchor = cam.transform.position.x < cfg.anchor.position.x;
-
-                // Default sprite is DOWN. To point RIGHT -> rotate Z by -90; to point LEFT -> +90
-                float zAngle = playerLeftOfAnchor ? -90f : 90f;
-
-                // combine facing rotation with Z rotation
-                arrowObj.transform.rotation = faceCam * Quaternion.Euler(0f, 0f, zAngle);
-            }
+            cfg.arrowObject.transform.position = newPos;
+            cfg.arrowObject.transform.rotation = cfg.originalRot;
         }
     }
 
@@ -573,7 +549,6 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // Public helpers for other systems (TavernDoor) to ask about tutorial blocking rules
     public bool IsBlockingRoomOpenRequirement
     {
         get
@@ -590,7 +565,6 @@ public class TutorialManager : MonoBehaviour
         {
             var gm = timeManager ?? GameTimeManager.Instance;
             if (gm == null) return false;
-            // Block manual close while player hasn't served the first customer during the tutorial
             return gm.CurrentDay == 1 &&
                    (current == Step.OpenTavern ||
                     current == Step.OpenBar ||
