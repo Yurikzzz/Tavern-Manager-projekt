@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-[RequireComponent(typeof(AudioSource))] // Automatically adds an AudioSource
+[RequireComponent(typeof(AudioSource))] 
 public class TavernDoor : Interactable
 {
     [SerializeField] private Sprite closedSprite;
@@ -23,7 +23,7 @@ public class TavernDoor : Interactable
     [SerializeField] private AudioClip closeSound;
 
     private SpriteRenderer spriteRenderer;
-    private AudioSource audioSource; // Reference to our audio source
+    private AudioSource audioSource;
     private bool isOpen = false;
     private enum PendingAction { None, Open, Close }
     private PendingAction pendingAction = PendingAction.None;
@@ -33,7 +33,7 @@ public class TavernDoor : Interactable
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        audioSource = GetComponent<AudioSource>(); // Grab the Audio Source
+        audioSource = GetComponent<AudioSource>();
 
         spriteRenderer.sprite = closedSprite;
         spriteRenderer.flipX = false;
@@ -92,7 +92,6 @@ public class TavernDoor : Interactable
 
     private IEnumerator ShowOpenSpriteTemporarily(float seconds)
     {
-        // Play sound when the door physically swings open for an NPC
         if (openSound != null) audioSource.PlayOneShot(openSound);
 
         spriteRenderer.sprite = openSprite;
@@ -100,7 +99,6 @@ public class TavernDoor : Interactable
 
         yield return new WaitForSeconds(seconds);
 
-        // Play sound when the door physically swings closed behind an NPC
         if (closeSound != null) audioSource.PlayOneShot(closeSound);
 
         spriteRenderer.sprite = closedSprite;
@@ -121,8 +119,7 @@ public class TavernDoor : Interactable
         switch (timeManager.CurrentTime)
         {
             case GameTimeManager.TimeOfDay.Morning:
-                // Prevent opening if any rental rooms are dirty
-                if (!AreAllRoomsClean())
+                if (timeManager.CurrentDay == 1 && !AreAllRoomsClean())
                 {
                     ShowCannotOpen("You must clean all rental rooms before opening the tavern.");
                 }
@@ -133,7 +130,15 @@ public class TavernDoor : Interactable
                 break;
 
             case GameTimeManager.TimeOfDay.Afternoon:
-                ShowConfirmation(PendingAction.Close);
+                var tutorial = TutorialManager.Instance;
+                if (timeManager.CurrentDay == 1 && tutorial != null && tutorial.IsBlockingManualClose)
+                {
+                    ShowCannotClose("You cannot manually close the tavern right now.");
+                }
+                else
+                {
+                    ShowConfirmation(PendingAction.Close);
+                }
                 break;
 
             default:
@@ -154,6 +159,22 @@ public class TavernDoor : Interactable
     }
 
     private void ShowCannotOpen(string message)
+    {
+        if (confirmationPanel == null || confirmationLabel == null)
+        {
+            Debug.LogWarning("Confirmation UI has not been assigned on the TavernDoor.");
+            return;
+        }
+
+        pendingAction = PendingAction.None;
+        confirmationPanel.SetActive(true);
+        confirmationLabel.text = message;
+
+        if (confirmButton != null) confirmButton.interactable = false;
+        if (cancelButton != null) cancelButton.interactable = true;
+    }
+
+    private void ShowCannotClose(string message)
     {
         if (confirmationPanel == null || confirmationLabel == null)
         {
@@ -239,7 +260,6 @@ public class TavernDoor : Interactable
         if (isOpen) return;
         isOpen = true;
 
-        // Play sound when you successfully open the tavern for the day
         if (openSound != null) audioSource.PlayOneShot(openSound);
 
         Debug.Log("The tavern is now open for business!");
@@ -250,7 +270,6 @@ public class TavernDoor : Interactable
         if (!isOpen) return;
         isOpen = false;
 
-        // Play sound when you successfully close the tavern
         if (closeSound != null) audioSource.PlayOneShot(closeSound);
 
         Debug.Log("The tavern is now closed for the night!");

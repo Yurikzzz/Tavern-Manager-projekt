@@ -5,7 +5,8 @@ using TMPro;
 
 public class TutorialManager : MonoBehaviour
 {
-    // Small popup UI (assign in inspector)
+    public static TutorialManager Instance { get; private set; }
+
     [Header("UI")]
     public GameObject popupRoot;
     public TextMeshProUGUI popupText;
@@ -18,7 +19,6 @@ public class TutorialManager : MonoBehaviour
     [Tooltip("Popup position while the bar menu is open.")]
     public Transform barOpenAnchor;
 
-    // Runtime references
     private GameTimeManager timeManager;
     private OrderManager orderManager;
     private BarUIController barUI;
@@ -45,12 +45,16 @@ public class TutorialManager : MonoBehaviour
 
     private Step current = Step.Idle;
 
-    // Tracking helpers
     private int initialRoomCount = 0;
     private int previousActiveOrders = 0;
     private bool deliveryMarkerShown = false;
 
     private bool barEventsSubscribed = false;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -62,7 +66,6 @@ public class TutorialManager : MonoBehaviour
         if (orderManager != null)
             orderManager.OnOrdersChanged += OnOrdersChanged;
 
-        // Cache popup RectTransform and default position (used if no defaultAnchor assigned)
         if (popupRoot != null)
         {
             popupRect = popupRoot.GetComponent<RectTransform>();
@@ -78,7 +81,6 @@ public class TutorialManager : MonoBehaviour
             }
         }
 
-        // Start initialization a frame later so other systems can register
         StartCoroutine(InitializeNextFrame());
     }
 
@@ -102,13 +104,14 @@ public class TutorialManager : MonoBehaviour
             barUI.OnDishConfirmed -= HandleDishConfirmed;
             barEventsSubscribed = false;
         }
+
+        if (Instance == this) Instance = null;
     }
 
     private IEnumerator InitializeNextFrame()
     {
         yield return null;
 
-        // Wait until GameTimeManager exists
         while (GameTimeManager.Instance == null)
             yield return null;
 
@@ -116,11 +119,9 @@ public class TutorialManager : MonoBehaviour
         timeManager.OnTimeChanged += OnTimeChanged;
         timeManager.OnDayChanged += OnDayChanged;
 
-        // Try to find BarUIController (may be null until scene fully initialized)
         barUI = FindObjectOfType<BarUIController>();
         TrySubscribeBarEvents();
 
-        // Only run the tutorial at day 1
         current = Step.WaitingStart;
     }
 
@@ -171,20 +172,17 @@ public class TutorialManager : MonoBehaviour
 
     private void HandleDishConfirmed(Dish dish)
     {
-        // record current active orders for later comparison
         previousActiveOrders = OrderManager.Instance != null ? OrderManager.Instance.ActiveOrders.Count : 0;
         SetStep(Step.FirstServed, "Dish prepared. Deliver it to the customer. Serve the first customer to continue.");
     }
 
     private void OnTimeChanged(GameTimeManager.TimeOfDay t)
     {
-        // If tavern was opened (time -> Afternoon) advance step if appropriate
         if (current == Step.OpenTavern && t == GameTimeManager.TimeOfDay.Afternoon)
         {
             SetStep(Step.OpenBar, "Tavern is open! Go to the bar and open the menu (interact with the bar).");
         }
 
-        // When tavern closes (becomes Night)
         if ((current == Step.FirstServed || current == Step.ServeUntilClose || current == Step.ChooseDish) &&
             t == GameTimeManager.TimeOfDay.Night)
         {
@@ -194,11 +192,26 @@ public class TutorialManager : MonoBehaviour
 
     private void OnDayChanged(int newDay)
     {
-        // Player slept / next day started -> finish tutorial
         if (current != Step.Finished)
         {
             SetStep(Step.Finished, "");
             HidePopup();
+            if (timeManager != null)
+            {
+                timeManager.OnTimeChanged -= OnTimeChanged;
+                timeManager.OnDayChanged -= OnDayChanged;
+            }
+
+            if (barEventsSubscribed && barUI != null)
+            {
+                barUI.OnBarOpened -= HandleBarOpened;
+                barUI.OnBarClosed -= HandleBarClosed;
+                barUI.OnOrderSelected -= HandleOrderSelected;
+                barUI.OnDishSelected -= HandleDishSelected;
+                barUI.OnDishConfirmed -= HandleDishConfirmed;
+                barEventsSubscribed = false;
+            }
+
             enabled = false;
         }
     }
@@ -206,12 +219,15 @@ public class TutorialManager : MonoBehaviour
     private void OnOrdersChanged()
     {
         if (orderManager == null) return;
+
+        if (current == Step.FirstServed)
+            return;
+
         previousActiveOrders = orderManager.ActiveOrders?.Count ?? 0;
     }
 
     void Update()
     {
-        // Ensure bar events are subscribed if bar was created later
         if (!barEventsSubscribed)
         {
             if (barUI == null) barUI = FindObjectOfType<BarUIController>();
@@ -220,14 +236,11 @@ public class TutorialManager : MonoBehaviour
 
         if (current == Step.WaitingStart)
         {
-            // Begin tutorial only on first day morning
             if (timeManager != null && timeManager.CurrentDay == 1 && timeManager.CurrentTime == GameTimeManager.TimeOfDay.Morning)
             {
-                // Count rental rooms in the scene
                 var rooms = FindObjectsOfType<RoomManager>();
                 initialRoomCount = rooms != null ? rooms.Length : 0;
 
-                // Start with cleaning step
                 SetStep(Step.CleanRooms, $"Welcome! First, please clean all rental rooms ({initialRoomCount} rooms). Clean every mess in the rooms to continue.");
             }
             UpdatePopupLocation();
@@ -236,7 +249,6 @@ public class TutorialManager : MonoBehaviour
 
         if (current == Step.CleanRooms)
         {
-            // Consider the step complete when all RoomManager instances are clean
             var rooms = FindObjectsOfType<RoomManager>();
             if (rooms != null && rooms.Length > 0)
             {
@@ -259,7 +271,6 @@ public class TutorialManager : MonoBehaviour
 
         if (current == Step.OpenBar)
         {
-            // Fallback: if bar UI is open but events are not firing for some reason, advance to choose-order
             if (barUI == null) barUI = FindObjectOfType<BarUIController>();
             if (barUI != null && barUI.barUIRoot != null && barUI.barUIRoot.activeInHierarchy)
             {
@@ -269,20 +280,18 @@ public class TutorialManager : MonoBehaviour
 
         if (current == Step.FirstServed)
         {
-            // Detect first served by observing ActiveOrders count drop (or explicit removal)
             if (OrderManager.Instance != null)
             {
                 int currentCount = OrderManager.Instance.ActiveOrders.Count;
                 if (currentCount < previousActiveOrders)
                 {
-                    SetStep(Step.ServeUntilClose, "Nice! Serve customers until the tavern closes. Keep serving until the tavern closes or you close it manually.");
+                    SetStep(Step.ServeUntilClose, "Nice! Serve customers until the tavern closes, or close it manually.");
                 }
             }
         }
 
         if (current == Step.ServeUntilClose)
         {
-            // Wait handled in OnTimeChanged: when time becomes Night we show go to bed step
         }
 
         UpdatePopupLocation();
@@ -305,7 +314,6 @@ public class TutorialManager : MonoBehaviour
         if (popupText != null)
             popupText.text = message;
 
-        // Update location immediately when showing
         UpdatePopupLocation();
     }
 
@@ -315,13 +323,11 @@ public class TutorialManager : MonoBehaviour
             popupRoot.SetActive(false);
     }
 
-    // Move popup to the correct anchor depending on game state.
     private void UpdatePopupLocation()
     {
         if (popupRoot == null) return;
-        if (!popupRoot.activeInHierarchy) return; // only reposition when visible
+        if (!popupRoot.activeInHierarchy) return;
 
-        // Ensure we have a BarUI reference
         if (barUI == null) barUI = FindObjectOfType<BarUIController>();
 
         bool barOpen = (barUI != null && barUI.barUIRoot != null && barUI.barUIRoot.activeInHierarchy);
@@ -341,17 +347,14 @@ public class TutorialManager : MonoBehaviour
         }
         else
         {
-            // No inspector anchors assigned - restore recorded default position
             MovePopupTo(null);
         }
     }
 
-    // Anchor == null means "restore recorded default position"
     private void MovePopupTo(Transform anchor)
     {
         if (popupRect == null)
         {
-            // Non-UI object: move world/local position
             if (popupRoot == null) return;
 
             if (anchor != null)
@@ -366,12 +369,10 @@ public class TutorialManager : MonoBehaviour
             return;
         }
 
-        // UI element (RectTransform) handling
         if (anchor == null)
         {
             if (defaultAnchor != null)
             {
-                // Use defaultAnchor if assigned
                 RectTransform defRect = defaultAnchor.GetComponent<RectTransform>();
                 if (defRect != null)
                 {
@@ -385,7 +386,6 @@ public class TutorialManager : MonoBehaviour
                 }
             }
 
-            // No default anchor: restore recorded local pos
             if (hasRecordedDefault)
             {
                 popupRect.localPosition = recordedDefaultLocalPos;
@@ -393,7 +393,6 @@ public class TutorialManager : MonoBehaviour
             return;
         }
 
-        // If anchor is a UI RectTransform -> copy anchored position
         RectTransform anchorRect = anchor.GetComponent<RectTransform>();
         if (anchorRect != null)
         {
@@ -401,7 +400,6 @@ public class TutorialManager : MonoBehaviour
             return;
         }
 
-        // Anchor is a world transform -> convert to canvas local position
         SetRectPositionFromWorldPoint(anchor.position);
     }
 
@@ -410,7 +408,6 @@ public class TutorialManager : MonoBehaviour
         Canvas canvas = popupRect.GetComponentInParent<Canvas>();
         if (canvas == null)
         {
-            // No canvas found - fallback to screen point positioning
             Vector3 screenPos = (Camera.main != null) ? Camera.main.WorldToScreenPoint(worldPos) : new Vector3(worldPos.x, worldPos.y, 0f);
             popupRect.position = screenPos;
             return;
@@ -423,6 +420,31 @@ public class TutorialManager : MonoBehaviour
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, cam, out Vector2 localPoint))
         {
             popupRect.localPosition = new Vector3(localPoint.x, localPoint.y, popupRect.localPosition.z);
+        }
+    }
+
+    public bool IsBlockingRoomOpenRequirement
+    {
+        get
+        {
+            var gm = timeManager ?? GameTimeManager.Instance;
+            if (gm == null) return false;
+            return gm.CurrentDay == 1 && (current == Step.WaitingStart || current == Step.CleanRooms);
+        }
+    }
+
+    public bool IsBlockingManualClose
+    {
+        get
+        {
+            var gm = timeManager ?? GameTimeManager.Instance;
+            if (gm == null) return false;
+            return gm.CurrentDay == 1 &&
+                   (current == Step.OpenTavern ||
+                    current == Step.OpenBar ||
+                    current == Step.ChooseOrder ||
+                    current == Step.ChooseDish ||
+                    current == Step.FirstServed);
         }
     }
 }
