@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: board_01
   displayName: Mission board
-  cost: 0
+  cost: 300
   coinIncomeBonus: 6
   popularityBonus: 3
   patienceBonus: 0

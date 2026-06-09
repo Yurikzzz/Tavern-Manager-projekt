@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: chan_01
   displayName: Chandelier
-  cost: 0
+  cost: 400
   coinIncomeBonus: 7
   popularityBonus: 4
   patienceBonus: 0

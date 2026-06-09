@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: upg_table_01
   displayName: Better tables
-  cost: 0
+  cost: 300
   coinIncomeBonus: 0
   popularityBonus: 3
   patienceBonus: 0.1

@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: sword_01
   displayName: Sword
-  cost: 0
+  cost: 150
   coinIncomeBonus: 3
   popularityBonus: 1
+  patienceBonus: 0
   visualSprite: {fileID: 21300000, guid: e39b4e42957983e46b03edc936af98ce, type: 3}

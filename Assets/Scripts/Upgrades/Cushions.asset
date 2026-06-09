@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: cush_01
   displayName: Chair cushions
-  cost: 0
+  cost: 350
   coinIncomeBonus: 3
   popularityBonus: 1
   patienceBonus: 0.2
